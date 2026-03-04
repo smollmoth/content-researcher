@@ -63,93 +63,6 @@ html, body,
 }
 [data-testid="stSidebar"] > div:first-child { padding-top: 28px; }
 
-/* ── Top progress bar ── */
-.top-progress-bar {
-    position: sticky;
-    top: 0;
-    z-index: 999;
-    background: rgba(11,11,15,0.97);
-    backdrop-filter: blur(16px);
-    border-bottom: 1px solid #1C1C24;
-    padding: 14px 0 0 0;
-    margin: -1rem -1rem 0 -1rem;
-}
-.progress-steps {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0;
-    padding: 0 32px 14px 32px;
-}
-.progress-step {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex: 1;
-    max-width: 220px;
-    position: relative;
-}
-.progress-step:not(:last-child)::after {
-    content: '';
-    flex: 1;
-    height: 1.5px;
-    background: #1C1C24;
-    margin: 0 8px;
-    transition: background 0.4s;
-}
-.progress-step.done:not(:last-child)::after,
-.progress-step.active:not(:last-child)::after {
-    background: linear-gradient(90deg, #7C6EE8, #1C1C24);
-}
-.progress-step.done + .progress-step:not(:last-child)::after {
-    background: #7C6EE8;
-}
-.step-dot {
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.72rem;
-    font-weight: 800;
-    flex-shrink: 0;
-    border: 1.5px solid #1C1C24;
-    background: #14141A;
-    color: #4B4B60;
-    transition: all 0.3s;
-}
-.progress-step.active .step-dot {
-    background: #7C6EE8;
-    border-color: #7C6EE8;
-    color: white;
-    box-shadow: 0 0 0 4px rgba(124,110,232,0.2);
-}
-.progress-step.done .step-dot {
-    background: #22C55E;
-    border-color: #22C55E;
-    color: white;
-}
-.step-label {
-    font-size: 0.72rem;
-    font-weight: 600;
-    color: #4B4B60;
-    white-space: nowrap;
-    transition: color 0.3s;
-}
-.progress-step.active .step-label { color: #A394FF; }
-.progress-step.done .step-label  { color: #22C55E; }
-.progress-bar-track {
-    height: 2px;
-    background: #1C1C24;
-    width: 100%;
-}
-.progress-bar-fill {
-    height: 2px;
-    background: linear-gradient(90deg, #7C6EE8, #A394FF);
-    transition: width 0.5s ease;
-}
-
 /* ── Hero ── */
 .hero {
     background: linear-gradient(135deg, #13101F 0%, #1A1432 60%, #1E1640 100%);
@@ -567,53 +480,36 @@ html, body,
 if 'pipeline_step' not in st.session_state:
     st.session_state.pipeline_step = 0
 
-def render_progress_bar(current_step: int):
-    """Render sticky top progress bar. current_step: 0=idle, 1-4=active step."""
-    steps = [
-        ("🕷️", "Extract"),
-        ("🔭", "Scout"),
-        ("🧠", "Analyse"),
-        ("📋", "Brief"),
-    ]
-    pct = int((current_step / 4) * 100)
+_PIPELINE_STEPS = [("🕷️", "Extract"), ("🔭", "Scout"), ("🧠", "Analyse"), ("📋", "Brief")]
 
-    steps_html = ""
-    for i, (icon, label) in enumerate(steps):
-        n = i + 1
-        if n < current_step:
-            cls = "done"
-            dot_inner = "✓"
-        elif n == current_step:
-            cls = "active"
-            dot_inner = str(n)
-        else:
-            cls = ""
-            dot_inner = str(n)
-        steps_html += f"""
-        <div class="progress-step {cls}">
-            <div class="step-dot">{dot_inner}</div>
-            <div class="step-label">{icon} {label}</div>
-        </div>
-        """
-
-    bar_html = f"""
-    <div class="top-progress-bar">
-        <div class="progress-steps">
-            {steps_html}
-        </div>
-        <div class="progress-bar-track">
-            <div class="progress-bar-fill" style="width:{pct}%;"></div>
-        </div>
-    </div>
-    """
-    return bar_html
+def render_progress(placeholder, current_step: int):
+    """Update the pipeline progress bar using native Streamlit components."""
+    with placeholder.container():
+        pct = min(current_step, 4) / 4
+        st.progress(pct)
+        cols = st.columns(4)
+        for i, (col, (icon, label)) in enumerate(zip(cols, _PIPELINE_STEPS)):
+            n = i + 1
+            with col:
+                if n < current_step:
+                    dot_bg, text_col, dot_text = "#22C55E", "#22C55E", "✓"
+                elif n == current_step:
+                    dot_bg, text_col, dot_text = "#7C6EE8", "#A394FF", str(n)
+                else:
+                    dot_bg, text_col, dot_text = "#2A2A36", "#4B4B60", str(n)
+                st.markdown(
+                    f'<div style="text-align:center;padding:4px 0 8px;">'
+                    f'<div style="width:26px;height:26px;border-radius:50%;background:{dot_bg};'
+                    f'color:white;display:inline-flex;align-items:center;justify-content:center;'
+                    f'font-size:0.72rem;font-weight:800;margin-bottom:4px;">{dot_text}</div>'
+                    f'<div style="font-size:0.7rem;font-weight:600;color:{text_col};">{icon} {label}</div>'
+                    f'</div>',
+                    unsafe_allow_html=True
+                )
 
 # ── Progress bar placeholder (updates live during pipeline) ───────────────────
 progress_placeholder = st.empty()
-progress_placeholder.markdown(
-    render_progress_bar(st.session_state.pipeline_step),
-    unsafe_allow_html=True
-)
+render_progress(progress_placeholder, st.session_state.pipeline_step)
 
 # ── Sidebar ───────────────────────────────────────────────────────────────────
 with st.sidebar:
@@ -763,7 +659,7 @@ if run_btn and can_run:
 
     # STEP 1: Extract
     st.session_state.pipeline_step = 1
-    progress_placeholder.markdown(render_progress_bar(1), unsafe_allow_html=True)
+    render_progress(progress_placeholder, 1)
 
     with st.status("🕷️ Extracting competitor content...", expanded=True) as status1:
         st.write(f"Scraping {len(competitor_urls)} URL{'s' if len(competitor_urls) > 1 else ''}...")
@@ -781,7 +677,7 @@ if run_btn and can_run:
 
     # STEP 2: Scout
     st.session_state.pipeline_step = 2
-    progress_placeholder.markdown(render_progress_bar(2), unsafe_allow_html=True)
+    render_progress(progress_placeholder, 2)
 
     scout_data = {}
     if run_scout_search and serper_key:
@@ -799,7 +695,7 @@ if run_btn and can_run:
 
     # STEP 3: Gap Analysis
     st.session_state.pipeline_step = 3
-    progress_placeholder.markdown(render_progress_bar(3), unsafe_allow_html=True)
+    render_progress(progress_placeholder, 3)
 
     with st.status("🧠 Analysing content gaps...", expanded=True) as status3:
         st.write("Finding common topics, unique angles and content gaps...")
@@ -814,7 +710,7 @@ if run_btn and can_run:
 
     # STEP 4: Claude
     st.session_state.pipeline_step = 4
-    progress_placeholder.markdown(render_progress_bar(4), unsafe_allow_html=True)
+    render_progress(progress_placeholder, 4)
 
     with st.status("📋 Generating content brief with Claude...", expanded=True) as status4:
         competitor_titles = [r.get('title', '') for r in competitor_results if r.get('title')]
@@ -837,7 +733,7 @@ if run_btn and can_run:
 
     # Mark all done
     st.session_state.pipeline_step = 5
-    progress_placeholder.markdown(render_progress_bar(5), unsafe_allow_html=True)
+    render_progress(progress_placeholder, 5)
 
     # ── Results ───────────────────────────────────────────────────────────────
     if brief:
