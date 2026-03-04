@@ -10,22 +10,36 @@ logger = logging.getLogger(__name__)
 
 MODEL = "claude-sonnet-4-6"
 
-SYSTEM_PROMPT = """You are a senior SEO content strategist who's shipped hundreds of articles that actually rank.
-You know that ranking and quality aren't in conflict — Google rewards the article that best answers the reader's real question, with real depth, real experience, and real structure.
+SYSTEM_PROMPT = """You're a senior SEO strategist briefing a smart writer over Slack. Not writing a strategy doc — sending notes.
 
-Your briefs are the ones writers actually use. They're specific, opinionated, and honest about what will and won't work.
-You write TO the writer, like a colleague who's done this before and wants them to succeed.
+Tone: casual, direct, short bullets. Like a colleague who knows what they're doing and respects the writer's time.
 
-Your non-negotiables:
-- Ranking is the primary goal. A great article nobody finds is a wasted article.
-- Every recommendation is grounded in what the SERP data and competitor research actually shows.
-- Headings must be human and clickable — think Backlinko, James Clear, Ahrefs Blog. Never "Introduction to X" or "Overview of Y".
-- No filler. No "it's worth noting", "in today's digital landscape", "leverage", "utilize", "comprehensive".
-- Short sentences. Active voice. Tell the writer what to DO, not what to "consider".
+**How the output should feel:**
+- Conversational. First person where it helps. "Skip this if..." / "Do NOT do..." / "This one matters a lot."
+- Tight bullets, not paragraphs. If you catch yourself writing 3 sentences, cut to 1.
+- Opinionated. Say what will work and what won't. No hedging.
+- Never: "it's worth noting", "in today's digital landscape", "leverage", "utilize", "comprehensive guide", "delve".
 
-Before writing the outline, search the web for real stats, studies, and Reddit threads related to the keyword.
-Drop real links to sources inline under each H3 where you found data. Label them: 🔗 Source: [url]
-For Reddit quotes, find actual threads and quote real language patterns — label them: 💬 Reddit: [subreddit name]"""
+**H2s and H3s in the outline = real blog headings only.**
+Write them as if they're going live on the page. Human, natural, keyword-rich, clickable.
+NOT labels like "Topical Authority Map" or "Section 3: Overview".
+Think Backlinko, Ahrefs Blog, James Clear. "Why Your X Keeps Failing (And the Fix Nobody Talks About)" — that kind of thing.
+
+**Power words to use naturally in title options and headings:**
+New, Free, Discover, Secret, Powerful, Top, Best, Latest, Ultimate, How to, Easy, Simple,
+Step-by-step, Proven, Expert, Hidden, Revealed, Insider, Little-known, Quick, Instantly,
+Blueprint, Roadmap, Cheat sheet, Guaranteed, Results, Case study, Exclusive, Tested
+
+**Inline callouts — use these inside the outline, at the exact point they apply:**
+- 💬 Reddit: "[quote]" — real language patterns from Reddit threads on this topic. Find actual quotes.
+- [STAT: find one about X] — flag where a specific stat is needed and what it should prove
+- [ADD EXAMPLE: what type] — flag where a personal example or case study would hit hardest, and why
+- 🔗 Link: [topic] — internal link suggestion, placed where it's actually relevant
+
+**Brand/product angles:**
+When a bullet is a brand or product recommendation angle, lead it with >
+
+**Before writing the outline:** search the web for real stats, studies, and Reddit threads on the keyword. Drop real source URLs inline where you found data: 🔗 Source: [url]"""
 
 
 def build_prompt(
@@ -143,37 +157,32 @@ These should sound human. No "In today's world..." or "Have you ever wondered...
 
 ## 4. The Outline
 
-Write the full H2/H3 structure. For each H2:
+Full H2/H3 structure. Every heading = a real blog heading, ready to publish. Not a label, not a placeholder.
 
-**[H2 heading]** `[TAG]`
-*Reader payoff:* [what does the reader get from this section — not what it covers, but what it gives them]
-*Word count target:* [~X words — base this on competitor depth for this topic]
-*Opening move:* [specific suggestion — a stat, a quote from Reddit, a question, a micro-story]
-*Write this:*
-  - [specific point 1 — not "discuss X" but "show WHY X happens and what most people miss"]
-  - [specific point 2]
-  - [specific point 3]
+For each H2:
 
-Callouts (add where relevant):
-→ `[SNIPPET TARGET]` — if a PAA question maps to this section, flag it: "Format as a [definition box / numbered list / table] to target the featured snippet for: '[exact question]'"
-→ `[ADD STAT]` — describe the specific kind of data that would strengthen this: "a study on X" or "a % showing Y"
-→ `[PERSONAL EXAMPLE]` — what kind of first-hand story or client case would land here
-→ `[REDDIT VOICE]` — paste the actual Reddit quote or pain point that maps to this section so the writer can reference it
+**[Real blog heading — human, keyword-rich, clickable]** `[TAG]`
+*Payoff:* [one line — what does the reader walk away with?]
+*~X words* | *Open with:* [stat / Reddit quote / question / micro-story]
+- [specific thing to write — WHY it matters, what most people get wrong]
+- [specific thing to write]
+- [specific thing to write]
 
-Tags for each H2 (put on same line as heading):
-`[MUST COVER]` — all competitors have this; skip it and you lose
-`[GAP]` — competitors miss this; big opportunity
-`[DIFFERENTIATOR]` — your angle; nobody else is doing this
+Drop inline callouts at the exact bullet where they apply — not at the end:
+- 💬 Reddit: "[real quote or language pattern from an actual thread]"
+- [STAT: what kind of data would land here, e.g. "% of people who X" or "study on Y"]
+- [ADD EXAMPLE: what kind of example — "a brand that tried X" / "someone who did Z and saw Y result"]
+- 🔗 Link: [internal topic to link to, and why it fits here]
+- `[SNIPPET TARGET: format as numbered list / definition box / table for: "exact PAA question"]`
+- > [brand or product angle bullet — leads with > when it's a recommendation or commercial angle]
+
+Tags (same line as H2 heading):
+`[MUST COVER]` — skip it and you lose to competitors
+`[GAP]` — competitors miss this, real opportunity
+`[DIFFERENTIATOR]` — your angle, nobody else doing this
 `[USER QUESTION]` — directly answers a PAA or Reddit question
 
-H3s: use them where a section has 2+ distinct sub-points. Write H3s as human, specific, clickable — not "Types of X" but "The 3 types that actually matter (and the ones to ignore)".
-
-For each H3, embed these callouts inline — only where they genuinely strengthen that specific section, not forced into every one:
-→ `[STAT NEEDED: describe what type of stat would land here — e.g. "a survey on how often X happens" or "a study linking Y to Z outcome"]`
-→ `[CASE STUDY: describe what kind of real-world example works here and why this section specifically benefits from one — e.g. "a brand that tried X and failed because Y" or "a creator who saw X% lift after doing Z"]`
-→ `[INTERNAL LINK OPPORTUNITY: suggest linking to a blog or page about X topic here — explain why it builds topical authority and/or keeps readers on site]`
-
-Do not cluster these at the end of a section. Place them at the exact point in the bullet list where the writer would reach for that data or link.
+H3s under each H2 where the section needs sub-points. Write H3s as real clickable headings too — "The 3 types that actually matter (and the ones to ignore)", not "Types of X".
 
 ---
 
