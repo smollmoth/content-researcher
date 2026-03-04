@@ -316,9 +316,9 @@ def generate_brief(
             messages=[{"role": "user", "content": prompt}],
         )
 
-        # With tool use enabled, content is a list of blocks; extract the final text block
-        text = next((b.text for b in reversed(message.content) if hasattr(b, "text")), None)
-        return text, None
+        # Web search produces interleaved text + tool_use blocks; join all text blocks in order
+        text = "\n\n".join(b.text for b in message.content if hasattr(b, "text") and b.text.strip())
+        return text or None, None
 
     except Exception as e:
         logger.error(f"Claude strategist failed: {e}")
