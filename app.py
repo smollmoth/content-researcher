@@ -34,111 +34,216 @@ st.set_page_config(
 # ── Custom CSS ────────────────────────────────────────────────────────────────
 st.markdown("""
 <style>
-/* ── Base ── */
-[data-testid="stAppViewContainer"] {
-    background-color: #F4F4F8;
-}
-[data-testid="stHeader"] { background: transparent; }
-[data-testid="stSidebar"] {
-    background-color: #FFFFFF;
-    border-right: 1px solid #EBEBEF;
-}
-[data-testid="stSidebar"] > div:first-child { padding-top: 24px; }
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 
-/* ── Typography ── */
-* { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', sans-serif; }
+/* ── Reset & Base ── */
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body,
+[data-testid="stAppViewContainer"],
+[data-testid="stMain"],
+.main, section[data-testid="stSidebar"] ~ div {
+    background-color: #0B0B0F !important;
+    color: #E2E2EC !important;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
+}
+
+[data-testid="stHeader"] {
+    background: rgba(11,11,15,0.95) !important;
+    border-bottom: 1px solid #1C1C24 !important;
+    backdrop-filter: blur(12px);
+}
+[data-testid="stDecoration"] { display: none; }
+[data-testid="stMainMenu"] button { color: #6B6B80 !important; }
+
+/* ── Sidebar ── */
+[data-testid="stSidebar"] {
+    background-color: #0E0E13 !important;
+    border-right: 1px solid #1C1C24 !important;
+}
+[data-testid="stSidebar"] > div:first-child { padding-top: 28px; }
+
+/* ── Top progress bar ── */
+.top-progress-bar {
+    position: sticky;
+    top: 0;
+    z-index: 999;
+    background: rgba(11,11,15,0.97);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid #1C1C24;
+    padding: 14px 0 0 0;
+    margin: -1rem -1rem 0 -1rem;
+}
+.progress-steps {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    padding: 0 32px 14px 32px;
+}
+.progress-step {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+    max-width: 220px;
+    position: relative;
+}
+.progress-step:not(:last-child)::after {
+    content: '';
+    flex: 1;
+    height: 1.5px;
+    background: #1C1C24;
+    margin: 0 8px;
+    transition: background 0.4s;
+}
+.progress-step.done:not(:last-child)::after,
+.progress-step.active:not(:last-child)::after {
+    background: linear-gradient(90deg, #7C6EE8, #1C1C24);
+}
+.progress-step.done + .progress-step:not(:last-child)::after {
+    background: #7C6EE8;
+}
+.step-dot {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.72rem;
+    font-weight: 800;
+    flex-shrink: 0;
+    border: 1.5px solid #1C1C24;
+    background: #14141A;
+    color: #4B4B60;
+    transition: all 0.3s;
+}
+.progress-step.active .step-dot {
+    background: #7C6EE8;
+    border-color: #7C6EE8;
+    color: white;
+    box-shadow: 0 0 0 4px rgba(124,110,232,0.2);
+}
+.progress-step.done .step-dot {
+    background: #22C55E;
+    border-color: #22C55E;
+    color: white;
+}
+.step-label {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: #4B4B60;
+    white-space: nowrap;
+    transition: color 0.3s;
+}
+.progress-step.active .step-label { color: #A394FF; }
+.progress-step.done .step-label  { color: #22C55E; }
+.progress-bar-track {
+    height: 2px;
+    background: #1C1C24;
+    width: 100%;
+}
+.progress-bar-fill {
+    height: 2px;
+    background: linear-gradient(90deg, #7C6EE8, #A394FF);
+    transition: width 0.5s ease;
+}
 
 /* ── Hero ── */
 .hero {
-    background: linear-gradient(135deg, #5A4FCF 0%, #7B68EE 60%, #9B8FFF 100%);
+    background: linear-gradient(135deg, #13101F 0%, #1A1432 60%, #1E1640 100%);
     border-radius: 20px;
-    padding: 44px 48px;
+    padding: 52px 56px;
     color: white;
-    margin-bottom: 28px;
+    margin-bottom: 32px;
     position: relative;
     overflow: hidden;
+    border: 1px solid #2A2140;
 }
 .hero::before {
     content: '';
     position: absolute;
-    top: -40px; right: -40px;
-    width: 240px; height: 240px;
-    background: rgba(255,255,255,0.06);
+    top: -60px; right: -60px;
+    width: 320px; height: 320px;
+    background: radial-gradient(circle, rgba(124,110,232,0.15) 0%, transparent 70%);
     border-radius: 50%;
 }
 .hero::after {
     content: '';
     position: absolute;
-    bottom: -60px; right: 80px;
-    width: 160px; height: 160px;
-    background: rgba(255,255,255,0.04);
+    bottom: -80px; right: 120px;
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, rgba(163,148,255,0.08) 0%, transparent 70%);
     border-radius: 50%;
 }
 .hero-eyebrow {
-    font-size: 0.72rem;
+    font-size: 0.68rem;
     font-weight: 700;
-    letter-spacing: 0.12em;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: rgba(255,255,255,0.65);
-    margin-bottom: 10px;
+    color: #A394FF;
+    margin-bottom: 14px;
 }
 .hero h1 {
-    font-size: 2.4rem;
-    font-weight: 800;
+    font-size: 2.8rem;
+    font-weight: 900;
     color: white;
-    margin: 0 0 10px 0;
-    line-height: 1.15;
+    margin: 0 0 12px 0;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
 }
 .hero p {
     font-size: 1.05rem;
-    color: rgba(255,255,255,0.8);
+    color: rgba(255,255,255,0.55);
     margin: 0;
-    max-width: 520px;
-    line-height: 1.6;
+    max-width: 540px;
+    line-height: 1.65;
 }
 .hero-pills {
     display: flex;
     gap: 10px;
-    margin-top: 22px;
+    margin-top: 28px;
     flex-wrap: wrap;
 }
 .hero-pill {
-    background: rgba(255,255,255,0.15);
-    border: 1px solid rgba(255,255,255,0.25);
+    background: rgba(124,110,232,0.15);
+    border: 1px solid rgba(124,110,232,0.3);
     border-radius: 20px;
-    padding: 5px 14px;
-    font-size: 0.78rem;
+    padding: 6px 16px;
+    font-size: 0.75rem;
     font-weight: 600;
-    color: white;
+    color: #A394FF;
 }
 
 /* ── Cards ── */
 .card {
-    background: #FFFFFF;
+    background: #111116;
     border-radius: 16px;
     padding: 28px 32px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04);
-    border: 1px solid #EBEBEF;
+    border: 1px solid #1C1C24;
     margin-bottom: 20px;
 }
 .card-title {
-    font-size: 0.68rem;
+    font-size: 0.63rem;
     font-weight: 700;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: #9CA3AF;
-    margin-bottom: 16px;
+    color: #4B4B60;
+    margin-bottom: 8px;
 }
 .card-heading {
-    font-size: 1.1rem;
+    font-size: 1.05rem;
     font-weight: 700;
-    color: #111827;
+    color: #E2E2EC;
     margin-bottom: 4px;
+    letter-spacing: -0.01em;
 }
 .card-sub {
-    font-size: 0.85rem;
-    color: #6B7280;
+    font-size: 0.83rem;
+    color: #6B6B80;
     margin-bottom: 20px;
+    line-height: 1.55;
 }
 
 /* ── Metric row ── */
@@ -146,29 +251,29 @@ st.markdown("""
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 16px;
-    margin-bottom: 24px;
+    margin-bottom: 28px;
 }
 .metric-card {
-    background: #FFFFFF;
-    border-radius: 14px;
-    padding: 22px 20px;
+    background: #111116;
+    border-radius: 16px;
+    padding: 28px 24px;
     text-align: center;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
-    border: 1px solid #EBEBEF;
+    border: 1px solid #1C1C24;
 }
 .metric-number {
-    font-size: 2.1rem;
-    font-weight: 800;
-    color: #5A4FCF;
+    font-size: 2.4rem;
+    font-weight: 900;
+    color: #A394FF;
     line-height: 1;
+    letter-spacing: -0.03em;
 }
 .metric-label {
-    font-size: 0.72rem;
-    color: #9CA3AF;
+    font-size: 0.68rem;
+    color: #4B4B60;
     text-transform: uppercase;
-    letter-spacing: 0.07em;
-    font-weight: 600;
-    margin-top: 6px;
+    letter-spacing: 0.08em;
+    font-weight: 700;
+    margin-top: 8px;
 }
 
 /* ── Gap items ── */
@@ -177,55 +282,61 @@ st.markdown("""
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 13px 18px;
-    background: #F9FAFB;
+    padding: 12px 16px;
+    background: #16161C;
     border-radius: 10px;
-    border-left: 3px solid #5A4FCF;
+    border-left: 3px solid #7C6EE8;
+    border-top: 1px solid #1C1C24;
+    border-right: 1px solid #1C1C24;
+    border-bottom: 1px solid #1C1C24;
 }
-.gap-item-term { font-weight: 600; color: #111827; font-size: 0.88rem; }
-.gap-item-meta { font-size: 0.75rem; color: #9CA3AF; font-weight: 500; }
+.gap-item-term { font-weight: 600; color: #D1D1E0; font-size: 0.85rem; }
+.gap-item-meta { font-size: 0.72rem; color: #4B4B60; font-weight: 500; }
 
 .gap-item-unique {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 13px 18px;
-    background: #F9FAFB;
+    padding: 12px 16px;
+    background: #16161C;
     border-radius: 10px;
     border-left: 3px solid #F59E0B;
+    border-top: 1px solid #1C1C24;
+    border-right: 1px solid #1C1C24;
+    border-bottom: 1px solid #1C1C24;
 }
 
 /* ── Keyword chips ── */
 .chip-wrap { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
 .chip {
-    background: #F3F4F6;
-    border: 1px solid #E5E7EB;
+    background: #16161C;
+    border: 1px solid #1C1C24;
     border-radius: 20px;
-    padding: 5px 13px;
-    font-size: 0.78rem;
-    color: #374151;
+    padding: 5px 14px;
+    font-size: 0.75rem;
+    color: #9090A8;
     font-weight: 600;
     display: inline-block;
 }
 .chip-purple {
-    background: #EDE9FE;
-    border-color: #DDD6FE;
-    color: #5B21B6;
+    background: rgba(124,110,232,0.12);
+    border-color: rgba(124,110,232,0.25);
+    color: #A394FF;
 }
 .chip-green {
-    background: #D1FAE5;
-    border-color: #A7F3D0;
-    color: #065F46;
+    background: rgba(34,197,94,0.1);
+    border-color: rgba(34,197,94,0.2);
+    color: #4ADE80;
 }
 .chip-yellow {
-    background: #FEF3C7;
-    border-color: #FDE68A;
-    color: #92400E;
+    background: rgba(245,158,11,0.1);
+    border-color: rgba(245,158,11,0.2);
+    color: #FCD34D;
 }
 .chip-blue {
-    background: #DBEAFE;
-    border-color: #BFDBFE;
-    color: #1E40AF;
+    background: rgba(59,130,246,0.1);
+    border-color: rgba(59,130,246,0.2);
+    color: #60A5FA;
 }
 
 /* ── Badges ── */
@@ -233,32 +344,28 @@ st.markdown("""
     display: inline-flex;
     align-items: center;
     gap: 5px;
-    padding: 4px 12px;
+    padding: 5px 13px;
     border-radius: 20px;
     font-size: 0.72rem;
     font-weight: 700;
     letter-spacing: 0.03em;
 }
-.badge-success { background: #D1FAE5; color: #059669; }
-.badge-error   { background: #FEE2E2; color: #DC2626; }
-.badge-info    { background: #DBEAFE; color: #2563EB; }
-.badge-warn    { background: #FEF3C7; color: #D97706; }
+.badge-success { background: rgba(34,197,94,0.12);  color: #4ADE80; border: 1px solid rgba(34,197,94,0.2); }
+.badge-error   { background: rgba(239,68,68,0.12);  color: #F87171; border: 1px solid rgba(239,68,68,0.2); }
+.badge-info    { background: rgba(59,130,246,0.12); color: #60A5FA; border: 1px solid rgba(59,130,246,0.2); }
+.badge-warn    { background: rgba(245,158,11,0.12); color: #FCD34D; border: 1px solid rgba(245,158,11,0.2); }
 
 /* ── Divider ── */
-.divider {
-    height: 1px;
-    background: #EBEBEF;
-    margin: 24px 0;
-}
+.divider { height: 1px; background: #1C1C24; margin: 28px 0; }
 
 /* ── Section label ── */
 .section-label {
-    font-size: 0.68rem;
+    font-size: 0.63rem;
     text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: #9CA3AF;
+    letter-spacing: 0.12em;
+    color: #4B4B60;
     font-weight: 700;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
 }
 
 /* ── Pipeline steps in sidebar ── */
@@ -269,156 +376,244 @@ st.markdown("""
     padding: 10px 14px;
     border-radius: 10px;
     margin-bottom: 6px;
-    background: #F9FAFB;
+    background: #16161C;
+    border: 1px solid #1C1C24;
 }
-.pipeline-step-icon {
-    font-size: 1rem;
-    width: 28px;
-    text-align: center;
-}
-.pipeline-step-text {
-    font-size: 0.82rem;
-    color: #374151;
-    font-weight: 500;
-}
+.pipeline-step-icon { font-size: 1rem; width: 28px; text-align: center; }
+.pipeline-step-text { font-size: 0.82rem; color: #9090A8; font-weight: 500; }
 
 /* ── Tabs ── */
 .stTabs [data-baseweb="tab-list"] {
-    background: white;
+    background: #111116;
     border-radius: 12px;
-    padding: 6px;
+    padding: 5px;
     gap: 4px;
-    border: 1px solid #EBEBEF;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    border: 1px solid #1C1C24;
 }
 .stTabs [data-baseweb="tab"] {
     border-radius: 8px;
     padding: 9px 22px;
     font-weight: 600;
-    font-size: 0.85rem;
-    color: #6B7280;
+    font-size: 0.83rem;
+    color: #6B6B80 !important;
+    background: transparent !important;
 }
 .stTabs [aria-selected="true"] {
-    background: #5A4FCF !important;
+    background: #7C6EE8 !important;
     color: white !important;
+}
+.stTabs [data-baseweb="tab-panel"] {
+    padding-top: 20px;
 }
 
 /* ── Buttons ── */
 .stButton > button {
     border-radius: 12px;
     font-weight: 600;
+    font-family: 'Inter', sans-serif !important;
     transition: all 0.2s;
+    border: 1px solid #1C1C24 !important;
+    background: #16161C !important;
+    color: #9090A8 !important;
 }
 .stButton > button[kind="primary"] {
-    background: linear-gradient(135deg, #5A4FCF 0%, #7B68EE 100%);
-    border: none;
-    color: white;
+    background: linear-gradient(135deg, #6B5ED6 0%, #8B7AEE 100%) !important;
+    border: none !important;
+    color: white !important;
     padding: 14px 28px;
-    font-size: 0.95rem;
+    font-size: 0.92rem;
     width: 100%;
+    box-shadow: 0 4px 20px rgba(107,94,214,0.3);
 }
-.stButton > button[kind="primary"]:hover { opacity: 0.9; transform: translateY(-1px); }
+.stButton > button[kind="primary"]:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba(107,94,214,0.45);
+}
+.stButton > button:disabled {
+    opacity: 0.35 !important;
+    cursor: not-allowed !important;
+}
 
 /* ── Download buttons ── */
 .stDownloadButton > button {
-    border-radius: 10px;
-    font-weight: 600;
-    font-size: 0.85rem;
-    width: 100%;
-    border: 1px solid #E5E7EB;
-    color: #374151;
-    background: white;
-    padding: 10px 16px;
+    border-radius: 10px !important;
+    font-weight: 600 !important;
+    font-size: 0.83rem !important;
+    width: 100% !important;
+    border: 1px solid #1C1C24 !important;
+    color: #9090A8 !important;
+    background: #111116 !important;
+    padding: 10px 16px !important;
+    font-family: 'Inter', sans-serif !important;
 }
 .stDownloadButton > button:hover {
-    background: #F9FAFB;
-    border-color: #5A4FCF;
-    color: #5A4FCF;
+    background: #16161C !important;
+    border-color: #7C6EE8 !important;
+    color: #A394FF !important;
 }
 
 /* ── Input fields ── */
 .stTextInput > label {
     font-weight: 600 !important;
-    font-size: 0.82rem !important;
-    color: #374151 !important;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
+    font-size: 0.72rem !important;
+    color: #6B6B80 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.08em !important;
+    font-family: 'Inter', sans-serif !important;
 }
 .stTextInput > div > div > input {
     border-radius: 10px !important;
-    border: 1.5px solid #E5E7EB !important;
-    padding: 10px 14px !important;
-    font-size: 0.9rem !important;
-    transition: border-color 0.2s;
+    border: 1.5px solid #1C1C24 !important;
+    padding: 11px 15px !important;
+    font-size: 0.88rem !important;
+    background: #111116 !important;
+    color: #E2E2EC !important;
+    font-family: 'Inter', sans-serif !important;
+    transition: border-color 0.2s, box-shadow 0.2s;
 }
+.stTextInput > div > div > input::placeholder { color: #3A3A4A !important; }
 .stTextInput > div > div > input:focus {
-    border-color: #5A4FCF !important;
-    box-shadow: 0 0 0 3px rgba(90,79,207,0.1) !important;
+    border-color: #7C6EE8 !important;
+    box-shadow: 0 0 0 3px rgba(124,110,232,0.15) !important;
+    outline: none !important;
 }
 .stSlider > label {
     font-weight: 600 !important;
-    font-size: 0.82rem !important;
-    color: #374151 !important;
+    font-size: 0.72rem !important;
+    color: #6B6B80 !important;
+    font-family: 'Inter', sans-serif !important;
 }
 .stCheckbox > label {
     font-weight: 600 !important;
-    font-size: 0.88rem !important;
-    color: #374151 !important;
+    font-size: 0.85rem !important;
+    color: #9090A8 !important;
+    font-family: 'Inter', sans-serif !important;
 }
+.stCheckbox > label > span { color: #9090A8 !important; }
+
+/* ── Sliders ── */
+[data-testid="stSlider"] > div > div > div { background: #7C6EE8 !important; }
 
 /* ── Expanders ── */
 [data-testid="stExpander"] {
-    border: 1px solid #E5E7EB !important;
+    border: 1px solid #1C1C24 !important;
     border-radius: 12px !important;
     overflow: hidden;
     margin-bottom: 10px;
+    background: #111116 !important;
 }
 [data-testid="stExpander"] summary {
     font-weight: 600;
-    color: #374151;
+    color: #9090A8 !important;
+    background: #111116 !important;
+    font-family: 'Inter', sans-serif !important;
 }
+[data-testid="stExpander"] > div { background: #111116 !important; }
 
 /* ── Status boxes ── */
 [data-testid="stStatusWidget"] {
     border-radius: 12px !important;
-    border: 1px solid #E5E7EB !important;
+    border: 1px solid #1C1C24 !important;
+    background: #111116 !important;
+    font-family: 'Inter', sans-serif !important;
 }
 
-/* ── Success / info / warning ── */
+/* ── Alert boxes ── */
 .stSuccess, .stInfo, .stWarning, .stError {
     border-radius: 12px !important;
+    font-family: 'Inter', sans-serif !important;
 }
+[data-testid="stMarkdownContainer"] p { color: #9090A8; }
 
 /* ── Scout result cards ── */
 .result-card {
-    background: #F9FAFB;
-    border: 1px solid #E5E7EB;
+    background: #16161C;
+    border: 1px solid #1C1C24;
     border-radius: 12px;
     padding: 16px 18px;
     margin-bottom: 10px;
 }
 .result-card-title {
     font-weight: 700;
-    color: #111827;
-    font-size: 0.88rem;
-    margin-bottom: 4px;
+    color: #D1D1E0;
+    font-size: 0.85rem;
+    margin-bottom: 5px;
 }
 .result-card-meta {
-    font-size: 0.78rem;
-    color: #9CA3AF;
-    line-height: 1.5;
+    font-size: 0.77rem;
+    color: #6B6B80;
+    line-height: 1.55;
 }
 
 /* ── Footer ── */
 .footer {
     text-align: center;
-    padding: 24px;
-    font-size: 0.78rem;
-    color: #9CA3AF;
+    padding: 32px;
+    font-size: 0.75rem;
+    color: #3A3A4A;
 }
-.footer a { color: #5A4FCF; text-decoration: none; }
+.footer a { color: #7C6EE8; text-decoration: none; }
+.footer a:hover { color: #A394FF; }
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: #0B0B0F; }
+::-webkit-scrollbar-thumb { background: #2A2A36; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #3A3A4A; }
 </style>
 """, unsafe_allow_html=True)
+
+# ── Session state for progress tracking ───────────────────────────────────────
+if 'pipeline_step' not in st.session_state:
+    st.session_state.pipeline_step = 0
+
+def render_progress_bar(current_step: int):
+    """Render sticky top progress bar. current_step: 0=idle, 1-4=active step."""
+    steps = [
+        ("🕷️", "Extract"),
+        ("🔭", "Scout"),
+        ("🧠", "Analyse"),
+        ("📋", "Brief"),
+    ]
+    pct = int((current_step / 4) * 100)
+
+    steps_html = ""
+    for i, (icon, label) in enumerate(steps):
+        n = i + 1
+        if n < current_step:
+            cls = "done"
+            dot_inner = "✓"
+        elif n == current_step:
+            cls = "active"
+            dot_inner = str(n)
+        else:
+            cls = ""
+            dot_inner = str(n)
+        steps_html += f"""
+        <div class="progress-step {cls}">
+            <div class="step-dot">{dot_inner}</div>
+            <div class="step-label">{icon} {label}</div>
+        </div>
+        """
+
+    bar_html = f"""
+    <div class="top-progress-bar">
+        <div class="progress-steps">
+            {steps_html}
+        </div>
+        <div class="progress-bar-track">
+            <div class="progress-bar-fill" style="width:{pct}%;"></div>
+        </div>
+    </div>
+    """
+    return bar_html
+
+# ── Progress bar placeholder (updates live during pipeline) ───────────────────
+progress_placeholder = st.empty()
+progress_placeholder.markdown(
+    render_progress_bar(st.session_state.pipeline_step),
+    unsafe_allow_html=True
+)
 
 # ── Sidebar ───────────────────────────────────────────────────────────────────
 with st.sidebar:
@@ -466,13 +661,13 @@ with st.sidebar:
     st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
     st.markdown('<div class="section-label">How it works</div>', unsafe_allow_html=True)
 
-    steps = [
+    steps_info = [
         ("🕷️", "Extract competitor content"),
         ("🔭", "Scout web & Reddit"),
         ("🧠", "Analyse content gaps"),
         ("📋", "Generate brief with Claude"),
     ]
-    for icon, text in steps:
+    for icon, text in steps_info:
         st.markdown(f"""
         <div class="pipeline-step">
             <span class="pipeline-step-icon">{icon}</span>
@@ -485,6 +680,9 @@ keys_ok = bool(anthropic_key)
 if run_scout_search and not serper_key:
     st.sidebar.warning("Add a Serper key to enable Scout, or uncheck it above.")
     keys_ok = False
+
+# ── Spacer below sticky bar ───────────────────────────────────────────────────
+st.markdown('<div style="height:24px;"></div>', unsafe_allow_html=True)
 
 # ── Hero ──────────────────────────────────────────────────────────────────────
 st.markdown("""
@@ -545,7 +743,7 @@ can_run = bool(topic and competitor_urls and keys_ok)
 col_btn, col_hint = st.columns([1, 2])
 with col_btn:
     run_btn = st.button(
-        "🚀 Start Research",
+        "🚀  Start Research",
         type="primary",
         disabled=not can_run,
         help="Fill in topic, at least one competitor URL, and API keys to start"
@@ -564,6 +762,9 @@ with col_hint:
 if run_btn and can_run:
 
     # STEP 1: Extract
+    st.session_state.pipeline_step = 1
+    progress_placeholder.markdown(render_progress_bar(1), unsafe_allow_html=True)
+
     with st.status("🕷️ Extracting competitor content...", expanded=True) as status1:
         st.write(f"Scraping {len(competitor_urls)} URL{'s' if len(competitor_urls) > 1 else ''}...")
 
@@ -579,6 +780,9 @@ if run_btn and can_run:
         status1.update(label=f"✅ Step 1 complete — {len(successful)} pages extracted", state="complete")
 
     # STEP 2: Scout
+    st.session_state.pipeline_step = 2
+    progress_placeholder.markdown(render_progress_bar(2), unsafe_allow_html=True)
+
     scout_data = {}
     if run_scout_search and serper_key:
         with st.status("🔭 Scouting web & Reddit...", expanded=True) as status2:
@@ -594,6 +798,9 @@ if run_btn and can_run:
         st.info("Scout skipped (no Serper key or disabled in settings).")
 
     # STEP 3: Gap Analysis
+    st.session_state.pipeline_step = 3
+    progress_placeholder.markdown(render_progress_bar(3), unsafe_allow_html=True)
+
     with st.status("🧠 Analysing content gaps...", expanded=True) as status3:
         st.write("Finding common topics, unique angles and content gaps...")
         gap_analysis = analyze_competitor_content(competitor_results)
@@ -606,6 +813,9 @@ if run_btn and can_run:
         status3.update(label="✅ Step 3 complete — Gap analysis done", state="complete")
 
     # STEP 4: Claude
+    st.session_state.pipeline_step = 4
+    progress_placeholder.markdown(render_progress_bar(4), unsafe_allow_html=True)
+
     with st.status("📋 Generating content brief with Claude...", expanded=True) as status4:
         competitor_titles = [r.get('title', '') for r in competitor_results if r.get('title')]
 
@@ -624,6 +834,10 @@ if run_btn and can_run:
             status4.update(label="❌ Step 4 failed", state="error")
         else:
             status4.update(label="✅ Step 4 complete — Content brief ready", state="complete")
+
+    # Mark all done
+    st.session_state.pipeline_step = 5
+    progress_placeholder.markdown(render_progress_bar(5), unsafe_allow_html=True)
 
     # ── Results ───────────────────────────────────────────────────────────────
     if brief:
@@ -659,10 +873,10 @@ if run_btn and can_run:
 
         # Tabs
         tab_brief, tab_gaps, tab_scout, tab_competitors = st.tabs([
-            "📋 Content Brief",
-            "🧠 Gap Analysis",
-            "🔭 Scout Results",
-            "🏆 Competitors",
+            "📋  Content Brief",
+            "🧠  Gap Analysis",
+            "🔭  Scout Results",
+            "🏆  Competitors",
         ])
 
         # ── Tab: Content Brief ────────────────────────────────────────────────
@@ -689,7 +903,7 @@ if run_btn and can_run:
                         st.markdown(f"""
                         <div class="gap-item">
                             <span class="gap-item-term">{item['term']}</span>
-                            <span class="gap-item-meta">{item['competitor_count']}/{n} competitors · {item['total_mentions']} mentions</span>
+                            <span class="gap-item-meta">{item['competitor_count']}/{n} · {item['total_mentions']}×</span>
                         </div>
                         """, unsafe_allow_html=True)
                 else:
@@ -710,8 +924,8 @@ if run_btn and can_run:
                         short_url = url.replace('https://', '').replace('http://', '')[:50]
                         chips_html = ''.join([f'<span class="chip chip-yellow">{t}</span>' for t in terms[:10]])
                         st.markdown(f"""
-                        <div style="margin-bottom:16px;">
-                            <div style="font-size:0.75rem;font-weight:700;color:#9CA3AF;margin-bottom:6px;">{short_url}</div>
+                        <div style="margin-bottom:18px;">
+                            <div style="font-size:0.7rem;font-weight:700;color:#4B4B60;margin-bottom:8px;letter-spacing:0.05em;">{short_url}</div>
                             <div class="chip-wrap">{chips_html}</div>
                         </div>
                         """, unsafe_allow_html=True)
@@ -730,7 +944,7 @@ if run_btn and can_run:
 
             if gap_analysis['all_keywords']:
                 chips_html = ''.join([
-                    f'<span class="chip chip-purple">{item["term"]} <span style="opacity:0.6;font-weight:400;">×{item["mentions"]}</span></span>'
+                    f'<span class="chip chip-purple">{item["term"]} <span style="opacity:0.5;font-weight:500;">×{item["mentions"]}</span></span>'
                     for item in gap_analysis['all_keywords'][:30]
                 ])
                 st.markdown(f'<div class="chip-wrap">{chips_html}</div>', unsafe_allow_html=True)
@@ -755,7 +969,6 @@ if run_btn and can_run:
                 col1, col2 = st.columns(2)
 
                 with col1:
-                    # PAA
                     st.markdown("""
                     <div class="card">
                         <div class="card-title">People Also Ask</div>
@@ -766,7 +979,6 @@ if run_btn and can_run:
                         st.markdown(f'<div class="gap-item"><span class="gap-item-term">❓ {q}</span></div>', unsafe_allow_html=True)
                     st.markdown('</div>', unsafe_allow_html=True)
 
-                    # Related searches
                     st.markdown("""
                     <div class="card">
                         <div class="card-title">Related Searches</div>
@@ -778,7 +990,6 @@ if run_btn and can_run:
                     st.markdown('</div>', unsafe_allow_html=True)
 
                 with col2:
-                    # Reddit
                     st.markdown("""
                     <div class="card">
                         <div class="card-title">Reddit Discussions</div>
@@ -788,13 +999,12 @@ if run_btn and can_run:
                     for r in scout_data.get('reddit_results', []):
                         st.markdown(f"""
                         <div class="result-card">
-                            <div class="result-card-title"><a href="{r['url']}" target="_blank" style="color:#5A4FCF;text-decoration:none;">{r['title']}</a></div>
+                            <div class="result-card-title"><a href="{r['url']}" target="_blank" style="color:#A394FF;text-decoration:none;">{r['title']}</a></div>
                             <div class="result-card-meta">{r.get('snippet', '')[:200]}</div>
                         </div>
                         """, unsafe_allow_html=True)
                     st.markdown('</div>', unsafe_allow_html=True)
 
-                # Web results (full width)
                 st.markdown("""
                 <div class="card">
                     <div class="card-title">Web Results</div>
@@ -806,7 +1016,7 @@ if run_btn and can_run:
                     with web_cols[i % 2]:
                         st.markdown(f"""
                         <div class="result-card">
-                            <div class="result-card-title"><a href="{r['url']}" target="_blank" style="color:#5A4FCF;text-decoration:none;">{r['title']}</a></div>
+                            <div class="result-card-title"><a href="{r['url']}" target="_blank" style="color:#A394FF;text-decoration:none;">{r['title']}</a></div>
                             <div class="result-card-meta">{r.get('snippet', '')[:180]}</div>
                         </div>
                         """, unsafe_allow_html=True)
@@ -831,18 +1041,18 @@ if run_btn and can_run:
                         c1, c2 = st.columns(2)
                         with c1:
                             st.markdown(f"""
-                            <div style="margin-bottom:8px;">
+                            <div style="margin-bottom:10px;">
                                 <span class="badge badge-success">✓ Success</span>
                             </div>
-                            <div style="font-size:0.85rem;color:#374151;margin-bottom:6px;"><strong>Title:</strong> {r.get('title', 'N/A')}</div>
-                            <div style="font-size:0.85rem;color:#374151;margin-bottom:6px;"><strong>H1:</strong> {r.get('h1', 'N/A')}</div>
-                            <div style="font-size:0.85rem;color:#374151;"><strong>Content:</strong> {r.get('content_length', 0):,} characters</div>
+                            <div style="font-size:0.83rem;color:#9090A8;margin-bottom:8px;"><strong style="color:#D1D1E0;">Title:</strong> {r.get('title', 'N/A')}</div>
+                            <div style="font-size:0.83rem;color:#9090A8;margin-bottom:8px;"><strong style="color:#D1D1E0;">H1:</strong> {r.get('h1', 'N/A')}</div>
+                            <div style="font-size:0.83rem;color:#9090A8;"><strong style="color:#D1D1E0;">Content:</strong> {r.get('content_length', 0):,} characters</div>
                             """, unsafe_allow_html=True)
                         with c2:
                             if r.get('headings'):
-                                st.markdown('<div style="font-size:0.82rem;font-weight:700;color:#374151;margin-bottom:8px;">Headings</div>', unsafe_allow_html=True)
+                                st.markdown('<div style="font-size:0.75rem;font-weight:700;color:#4B4B60;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px;">Headings</div>', unsafe_allow_html=True)
                                 for h in r['headings'][:15]:
-                                    st.markdown(f'<div style="font-size:0.8rem;color:#6B7280;padding:3px 0;border-bottom:1px solid #F3F4F6;">— {h}</div>', unsafe_allow_html=True)
+                                    st.markdown(f'<div style="font-size:0.78rem;color:#6B6B80;padding:4px 0;border-bottom:1px solid #1C1C24;">— {h}</div>', unsafe_allow_html=True)
                     else:
                         st.markdown(f'<span class="badge badge-error">✗ Failed: {r.get("error", "Unknown error")}</span>', unsafe_allow_html=True)
 
