@@ -150,8 +150,15 @@ def format_gap_summary(gap_analysis: dict, scout_data: Optional[dict] = None) ->
     n = gap_analysis['total_competitors_analyzed']
     lines.append(f"## Competitor Analysis Summary ({n} competitors analyzed)\n")
 
+    # Competitor word counts — so Claude can suggest a target depth
+    if gap_analysis.get('coverage_by_competitor'):
+        lines.append("### Competitor Word Counts (approx.)")
+        for url, data in gap_analysis['coverage_by_competitor'].items():
+            short = url.replace('https://', '').replace('http://', '')[:60]
+            lines.append(f"- {short}: ~{data['word_count']:,} words | \"{data.get('title', '')}\"")
+
     # Common topics
-    lines.append("### Topics All Competitors Cover")
+    lines.append("\n### Topics All Competitors Cover")
     for item in gap_analysis['common_topics'][:20]:
         lines.append(f"- **{item['term']}** (in {item['competitor_count']}/{n} competitors, {item['total_mentions']} total mentions)")
 
