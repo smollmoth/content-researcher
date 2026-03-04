@@ -43,43 +43,43 @@ html, body,
 [data-testid="stAppViewContainer"],
 [data-testid="stMain"],
 .main, section[data-testid="stSidebar"] ~ div {
-    background-color: #0B0B0F !important;
-    color: #E2E2EC !important;
+    background-color: #FAFAFA !important;
+    color: #1A1A2E !important;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
 }
 
 [data-testid="stHeader"] {
-    background: rgba(11,11,15,0.95) !important;
-    border-bottom: 1px solid #1C1C24 !important;
+    background: rgba(250,250,252,0.95) !important;
+    border-bottom: 1px solid #E2E2EC !important;
     backdrop-filter: blur(12px);
 }
 [data-testid="stDecoration"] { display: none; }
-[data-testid="stMainMenu"] button { color: #6B6B80 !important; }
+[data-testid="stMainMenu"] button { color: #9999B8 !important; }
 
 /* ── Sidebar ── */
 [data-testid="stSidebar"] {
-    background-color: #0E0E13 !important;
-    border-right: 1px solid #1C1C24 !important;
+    background-color: #F5F5FA !important;
+    border-right: 1px solid #E2E2EC !important;
 }
 [data-testid="stSidebar"] > div:first-child { padding-top: 28px; }
 
 /* ── Hero ── */
 .hero {
-    background: linear-gradient(135deg, #13101F 0%, #1A1432 60%, #1E1640 100%);
+    background: linear-gradient(135deg, #EEE9FF 0%, #E6E0FF 60%, #E2DAFF 100%);
     border-radius: 20px;
     padding: 52px 56px;
-    color: white;
+    color: #1A1A2E;
     margin-bottom: 32px;
     position: relative;
     overflow: hidden;
-    border: 1px solid #2A2140;
+    border: 1px solid #D0C8FF;
 }
 .hero::before {
     content: '';
     position: absolute;
     top: -60px; right: -60px;
     width: 320px; height: 320px;
-    background: radial-gradient(circle, rgba(124,110,232,0.15) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(124,110,232,0.12) 0%, transparent 70%);
     border-radius: 50%;
 }
 .hero::after {
@@ -95,20 +95,20 @@ html, body,
     font-weight: 700;
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: #A394FF;
+    color: #7C6EE8;
     margin-bottom: 14px;
 }
 .hero h1 {
     font-size: 2.8rem;
     font-weight: 900;
-    color: white;
+    color: #1A1A2E;
     margin: 0 0 12px 0;
     line-height: 1.1;
     letter-spacing: -0.02em;
 }
 .hero p {
     font-size: 1.05rem;
-    color: rgba(255,255,255,0.55);
+    color: rgba(26,26,46,0.6);
     margin: 0;
     max-width: 540px;
     line-height: 1.65;
@@ -120,21 +120,21 @@ html, body,
     flex-wrap: wrap;
 }
 .hero-pill {
-    background: rgba(124,110,232,0.15);
-    border: 1px solid rgba(124,110,232,0.3);
+    background: rgba(124,110,232,0.12);
+    border: 1px solid rgba(124,110,232,0.28);
     border-radius: 20px;
     padding: 6px 16px;
     font-size: 0.75rem;
     font-weight: 600;
-    color: #A394FF;
+    color: #6B5ED6;
 }
 
 /* ── Cards ── */
 .card {
-    background: #111116;
+    background: #FFFFFF;
     border-radius: 16px;
     padding: 28px 32px;
-    border: 1px solid #1C1C24;
+    border: 1px solid #E2E2EC;
     margin-bottom: 20px;
 }
 .card-title {
@@ -142,19 +142,19 @@ html, body,
     font-weight: 700;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: #4B4B60;
+    color: #AAAACC;
     margin-bottom: 8px;
 }
 .card-heading {
     font-size: 1.05rem;
     font-weight: 700;
-    color: #E2E2EC;
+    color: #1A1A2E;
     margin-bottom: 4px;
     letter-spacing: -0.01em;
 }
 .card-sub {
     font-size: 0.83rem;
-    color: #6B6B80;
+    color: #7777A0;
     margin-bottom: 20px;
     line-height: 1.55;
 }
@@ -167,22 +167,22 @@ html, body,
     margin-bottom: 28px;
 }
 .metric-card {
-    background: #111116;
+    background: #FFFFFF;
     border-radius: 16px;
     padding: 28px 24px;
     text-align: center;
-    border: 1px solid #1C1C24;
+    border: 1px solid #E2E2EC;
 }
 .metric-number {
     font-size: 2.4rem;
     font-weight: 900;
-    color: #A394FF;
+    color: #7C6EE8;
     line-height: 1;
     letter-spacing: -0.03em;
 }
 .metric-label {
     font-size: 0.68rem;
-    color: #4B4B60;
+    color: #AAAACC;
     text-transform: uppercase;
     letter-spacing: 0.08em;
     font-weight: 700;
@@ -196,60 +196,60 @@ html, body,
     align-items: center;
     justify-content: space-between;
     padding: 12px 16px;
-    background: #16161C;
+    background: #F7F7FC;
     border-radius: 10px;
     border-left: 3px solid #7C6EE8;
-    border-top: 1px solid #1C1C24;
-    border-right: 1px solid #1C1C24;
-    border-bottom: 1px solid #1C1C24;
+    border-top: 1px solid #E2E2EC;
+    border-right: 1px solid #E2E2EC;
+    border-bottom: 1px solid #E2E2EC;
 }
-.gap-item-term { font-weight: 600; color: #D1D1E0; font-size: 0.85rem; }
-.gap-item-meta { font-size: 0.72rem; color: #4B4B60; font-weight: 500; }
+.gap-item-term { font-weight: 600; color: #1A1A2E; font-size: 0.85rem; }
+.gap-item-meta { font-size: 0.72rem; color: #AAAACC; font-weight: 500; }
 
 .gap-item-unique {
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 12px 16px;
-    background: #16161C;
+    background: #F7F7FC;
     border-radius: 10px;
     border-left: 3px solid #F59E0B;
-    border-top: 1px solid #1C1C24;
-    border-right: 1px solid #1C1C24;
-    border-bottom: 1px solid #1C1C24;
+    border-top: 1px solid #E2E2EC;
+    border-right: 1px solid #E2E2EC;
+    border-bottom: 1px solid #E2E2EC;
 }
 
 /* ── Keyword chips ── */
 .chip-wrap { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
 .chip {
-    background: #16161C;
-    border: 1px solid #1C1C24;
+    background: #F0F0FA;
+    border: 1px solid #E2E2F0;
     border-radius: 20px;
     padding: 5px 14px;
     font-size: 0.75rem;
-    color: #9090A8;
+    color: #666688;
     font-weight: 600;
     display: inline-block;
 }
 .chip-purple {
-    background: rgba(124,110,232,0.12);
-    border-color: rgba(124,110,232,0.25);
-    color: #A394FF;
+    background: rgba(124,110,232,0.08);
+    border-color: rgba(124,110,232,0.2);
+    color: #6B5ED6;
 }
 .chip-green {
-    background: rgba(34,197,94,0.1);
+    background: rgba(34,197,94,0.08);
     border-color: rgba(34,197,94,0.2);
-    color: #4ADE80;
+    color: #16A34A;
 }
 .chip-yellow {
-    background: rgba(245,158,11,0.1);
+    background: rgba(245,158,11,0.08);
     border-color: rgba(245,158,11,0.2);
-    color: #FCD34D;
+    color: #D97706;
 }
 .chip-blue {
-    background: rgba(59,130,246,0.1);
+    background: rgba(59,130,246,0.08);
     border-color: rgba(59,130,246,0.2);
-    color: #60A5FA;
+    color: #2563EB;
 }
 
 /* ── Badges ── */
@@ -263,20 +263,20 @@ html, body,
     font-weight: 700;
     letter-spacing: 0.03em;
 }
-.badge-success { background: rgba(34,197,94,0.12);  color: #4ADE80; border: 1px solid rgba(34,197,94,0.2); }
-.badge-error   { background: rgba(239,68,68,0.12);  color: #F87171; border: 1px solid rgba(239,68,68,0.2); }
-.badge-info    { background: rgba(59,130,246,0.12); color: #60A5FA; border: 1px solid rgba(59,130,246,0.2); }
-.badge-warn    { background: rgba(245,158,11,0.12); color: #FCD34D; border: 1px solid rgba(245,158,11,0.2); }
+.badge-success { background: rgba(34,197,94,0.1);  color: #16A34A; border: 1px solid rgba(34,197,94,0.2); }
+.badge-error   { background: rgba(239,68,68,0.1);  color: #DC2626; border: 1px solid rgba(239,68,68,0.2); }
+.badge-info    { background: rgba(59,130,246,0.1); color: #2563EB; border: 1px solid rgba(59,130,246,0.2); }
+.badge-warn    { background: rgba(245,158,11,0.1); color: #D97706; border: 1px solid rgba(245,158,11,0.2); }
 
 /* ── Divider ── */
-.divider { height: 1px; background: #1C1C24; margin: 28px 0; }
+.divider { height: 1px; background: #E2E2EC; margin: 28px 0; }
 
 /* ── Section label ── */
 .section-label {
     font-size: 0.63rem;
     text-transform: uppercase;
     letter-spacing: 0.12em;
-    color: #4B4B60;
+    color: #AAAACC;
     font-weight: 700;
     margin-bottom: 12px;
 }
@@ -289,26 +289,26 @@ html, body,
     padding: 10px 14px;
     border-radius: 10px;
     margin-bottom: 6px;
-    background: #16161C;
-    border: 1px solid #1C1C24;
+    background: #FFFFFF;
+    border: 1px solid #E2E2EC;
 }
 .pipeline-step-icon { font-size: 1rem; width: 28px; text-align: center; }
-.pipeline-step-text { font-size: 0.82rem; color: #9090A8; font-weight: 500; }
+.pipeline-step-text { font-size: 0.82rem; color: #7777A0; font-weight: 500; }
 
 /* ── Tabs ── */
 .stTabs [data-baseweb="tab-list"] {
-    background: #111116;
+    background: #F0F0FA;
     border-radius: 12px;
     padding: 5px;
     gap: 4px;
-    border: 1px solid #1C1C24;
+    border: 1px solid #E2E2EC;
 }
 .stTabs [data-baseweb="tab"] {
     border-radius: 8px;
     padding: 9px 22px;
     font-weight: 600;
     font-size: 0.83rem;
-    color: #6B6B80 !important;
+    color: #7777A0 !important;
     background: transparent !important;
 }
 .stTabs [aria-selected="true"] {
@@ -325,9 +325,9 @@ html, body,
     font-weight: 600;
     font-family: 'Inter', sans-serif !important;
     transition: all 0.2s;
-    border: 1px solid #1C1C24 !important;
-    background: #16161C !important;
-    color: #9090A8 !important;
+    border: 1px solid #E2E2EC !important;
+    background: #F7F7FC !important;
+    color: #7777A0 !important;
 }
 .stButton > button[kind="primary"] {
     background: linear-gradient(135deg, #6B5ED6 0%, #8B7AEE 100%) !important;
@@ -336,11 +336,11 @@ html, body,
     padding: 14px 28px;
     font-size: 0.92rem;
     width: 100%;
-    box-shadow: 0 4px 20px rgba(107,94,214,0.3);
+    box-shadow: 0 4px 20px rgba(107,94,214,0.25);
 }
 .stButton > button[kind="primary"]:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 28px rgba(107,94,214,0.45);
+    box-shadow: 0 8px 28px rgba(107,94,214,0.38);
 }
 .stButton > button:disabled {
     opacity: 0.35 !important;
@@ -353,81 +353,81 @@ html, body,
     font-weight: 600 !important;
     font-size: 0.83rem !important;
     width: 100% !important;
-    border: 1px solid #1C1C24 !important;
-    color: #9090A8 !important;
-    background: #111116 !important;
+    border: 1px solid #E2E2EC !important;
+    color: #7777A0 !important;
+    background: #FAFAFA !important;
     padding: 10px 16px !important;
     font-family: 'Inter', sans-serif !important;
 }
 .stDownloadButton > button:hover {
-    background: #16161C !important;
+    background: #F0EEFF !important;
     border-color: #7C6EE8 !important;
-    color: #A394FF !important;
+    color: #6B5ED6 !important;
 }
 
 /* ── Input fields ── */
 .stTextInput > label {
     font-weight: 600 !important;
     font-size: 0.72rem !important;
-    color: #6B6B80 !important;
+    color: #9999B8 !important;
     text-transform: uppercase !important;
     letter-spacing: 0.08em !important;
     font-family: 'Inter', sans-serif !important;
 }
 .stTextInput > div > div > input {
     border-radius: 10px !important;
-    border: 1.5px solid #1C1C24 !important;
+    border: 1.5px solid #E2E2EC !important;
     padding: 11px 15px !important;
     font-size: 0.88rem !important;
-    background: #111116 !important;
-    color: #E2E2EC !important;
+    background: #FAFAFA !important;
+    color: #1A1A2E !important;
     font-family: 'Inter', sans-serif !important;
     transition: border-color 0.2s, box-shadow 0.2s;
 }
-.stTextInput > div > div > input::placeholder { color: #3A3A4A !important; }
+.stTextInput > div > div > input::placeholder { color: #C8C8DC !important; }
 .stTextInput > div > div > input:focus {
     border-color: #7C6EE8 !important;
-    box-shadow: 0 0 0 3px rgba(124,110,232,0.15) !important;
+    box-shadow: 0 0 0 3px rgba(124,110,232,0.12) !important;
     outline: none !important;
 }
 .stSlider > label {
     font-weight: 600 !important;
     font-size: 0.72rem !important;
-    color: #6B6B80 !important;
+    color: #9999B8 !important;
     font-family: 'Inter', sans-serif !important;
 }
 .stCheckbox > label {
     font-weight: 600 !important;
     font-size: 0.85rem !important;
-    color: #9090A8 !important;
+    color: #7777A0 !important;
     font-family: 'Inter', sans-serif !important;
 }
-.stCheckbox > label > span { color: #9090A8 !important; }
+.stCheckbox > label > span { color: #7777A0 !important; }
 
 /* ── Sliders ── */
 [data-testid="stSlider"] > div > div > div { background: #7C6EE8 !important; }
 
 /* ── Expanders ── */
 [data-testid="stExpander"] {
-    border: 1px solid #1C1C24 !important;
+    border: 1px solid #E2E2EC !important;
     border-radius: 12px !important;
     overflow: hidden;
     margin-bottom: 10px;
-    background: #111116 !important;
+    background: #FFFFFF !important;
 }
 [data-testid="stExpander"] summary {
     font-weight: 600;
-    color: #9090A8 !important;
-    background: #111116 !important;
+    color: #555570 !important;
+    background: #FFFFFF !important;
     font-family: 'Inter', sans-serif !important;
 }
-[data-testid="stExpander"] > div { background: #111116 !important; }
+[data-testid="stExpander"] > div { background: #FFFFFF !important; }
 
 /* ── Status boxes ── */
 [data-testid="stStatusWidget"] {
     border-radius: 12px !important;
-    border: 1px solid #1C1C24 !important;
-    background: #111116 !important;
+    border: 1px solid #E2E2EC !important;
+    background: #FFFFFF !important;
     font-family: 'Inter', sans-serif !important;
 }
 
@@ -436,25 +436,25 @@ html, body,
     border-radius: 12px !important;
     font-family: 'Inter', sans-serif !important;
 }
-[data-testid="stMarkdownContainer"] p { color: #9090A8; }
+[data-testid="stMarkdownContainer"] p { color: #55556A; }
 
 /* ── Scout result cards ── */
 .result-card {
-    background: #16161C;
-    border: 1px solid #1C1C24;
+    background: #F7F7FC;
+    border: 1px solid #E2E2EC;
     border-radius: 12px;
     padding: 16px 18px;
     margin-bottom: 10px;
 }
 .result-card-title {
     font-weight: 700;
-    color: #D1D1E0;
+    color: #1A1A2E;
     font-size: 0.85rem;
     margin-bottom: 5px;
 }
 .result-card-meta {
     font-size: 0.77rem;
-    color: #6B6B80;
+    color: #7777A0;
     line-height: 1.55;
 }
 
@@ -463,16 +463,16 @@ html, body,
     text-align: center;
     padding: 32px;
     font-size: 0.75rem;
-    color: #3A3A4A;
+    color: #AAAACC;
 }
 .footer a { color: #7C6EE8; text-decoration: none; }
-.footer a:hover { color: #A394FF; }
+.footer a:hover { color: #6B5ED6; }
 
 /* ── Scrollbar ── */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: #0B0B0F; }
-::-webkit-scrollbar-thumb { background: #2A2A36; border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: #3A3A4A; }
+::-webkit-scrollbar-track { background: #F5F5FA; }
+::-webkit-scrollbar-thumb { background: #D0D0E0; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #B8B8CC; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -496,11 +496,12 @@ def render_progress(placeholder, current_step: int):
                 elif n == current_step:
                     dot_bg, text_col, dot_text = "#7C6EE8", "#A394FF", str(n)
                 else:
-                    dot_bg, text_col, dot_text = "#2A2A36", "#4B4B60", str(n)
+                    dot_bg, text_col, dot_text = "#E2E2EC", "#AAAACC", str(n)
+                dot_text_color = "white" if dot_bg != "#E2E2EC" else "#AAAACC"
                 st.markdown(
                     f'<div style="text-align:center;padding:4px 0 8px;">'
                     f'<div style="width:26px;height:26px;border-radius:50%;background:{dot_bg};'
-                    f'color:white;display:inline-flex;align-items:center;justify-content:center;'
+                    f'color:{dot_text_color};display:inline-flex;align-items:center;justify-content:center;'
                     f'font-size:0.72rem;font-weight:800;margin-bottom:4px;">{dot_text}</div>'
                     f'<div style="font-size:0.7rem;font-weight:600;color:{text_col};">{icon} {label}</div>'
                     f'</div>',
@@ -821,7 +822,7 @@ if run_btn and can_run:
                         chips_html = ''.join([f'<span class="chip chip-yellow">{t}</span>' for t in terms[:10]])
                         st.markdown(f"""
                         <div style="margin-bottom:18px;">
-                            <div style="font-size:0.7rem;font-weight:700;color:#4B4B60;margin-bottom:8px;letter-spacing:0.05em;">{short_url}</div>
+                            <div style="font-size:0.7rem;font-weight:700;color:#AAAACC;margin-bottom:8px;letter-spacing:0.05em;">{short_url}</div>
                             <div class="chip-wrap">{chips_html}</div>
                         </div>
                         """, unsafe_allow_html=True)
@@ -895,7 +896,7 @@ if run_btn and can_run:
                     for r in scout_data.get('reddit_results', []):
                         st.markdown(f"""
                         <div class="result-card">
-                            <div class="result-card-title"><a href="{r['url']}" target="_blank" style="color:#A394FF;text-decoration:none;">{r['title']}</a></div>
+                            <div class="result-card-title"><a href="{r['url']}" target="_blank" style="color:#7C6EE8;text-decoration:none;">{r['title']}</a></div>
                             <div class="result-card-meta">{r.get('snippet', '')[:200]}</div>
                         </div>
                         """, unsafe_allow_html=True)
@@ -912,7 +913,7 @@ if run_btn and can_run:
                     with web_cols[i % 2]:
                         st.markdown(f"""
                         <div class="result-card">
-                            <div class="result-card-title"><a href="{r['url']}" target="_blank" style="color:#A394FF;text-decoration:none;">{r['title']}</a></div>
+                            <div class="result-card-title"><a href="{r['url']}" target="_blank" style="color:#7C6EE8;text-decoration:none;">{r['title']}</a></div>
                             <div class="result-card-meta">{r.get('snippet', '')[:180]}</div>
                         </div>
                         """, unsafe_allow_html=True)
@@ -940,15 +941,15 @@ if run_btn and can_run:
                             <div style="margin-bottom:10px;">
                                 <span class="badge badge-success">✓ Success</span>
                             </div>
-                            <div style="font-size:0.83rem;color:#9090A8;margin-bottom:8px;"><strong style="color:#D1D1E0;">Title:</strong> {r.get('title', 'N/A')}</div>
-                            <div style="font-size:0.83rem;color:#9090A8;margin-bottom:8px;"><strong style="color:#D1D1E0;">H1:</strong> {r.get('h1', 'N/A')}</div>
-                            <div style="font-size:0.83rem;color:#9090A8;"><strong style="color:#D1D1E0;">Content:</strong> {r.get('content_length', 0):,} characters</div>
+                            <div style="font-size:0.83rem;color:#55556A;margin-bottom:8px;"><strong style="color:#1A1A2E;">Title:</strong> {r.get('title', 'N/A')}</div>
+                            <div style="font-size:0.83rem;color:#55556A;margin-bottom:8px;"><strong style="color:#1A1A2E;">H1:</strong> {r.get('h1', 'N/A')}</div>
+                            <div style="font-size:0.83rem;color:#55556A;"><strong style="color:#1A1A2E;">Content:</strong> {r.get('content_length', 0):,} characters</div>
                             """, unsafe_allow_html=True)
                         with c2:
                             if r.get('headings'):
-                                st.markdown('<div style="font-size:0.75rem;font-weight:700;color:#4B4B60;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px;">Headings</div>', unsafe_allow_html=True)
+                                st.markdown('<div style="font-size:0.75rem;font-weight:700;color:#AAAACC;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px;">Headings</div>', unsafe_allow_html=True)
                                 for h in r['headings'][:15]:
-                                    st.markdown(f'<div style="font-size:0.78rem;color:#6B6B80;padding:4px 0;border-bottom:1px solid #1C1C24;">— {h}</div>', unsafe_allow_html=True)
+                                    st.markdown(f'<div style="font-size:0.78rem;color:#7777A0;padding:4px 0;border-bottom:1px solid #E2E2EC;">— {h}</div>', unsafe_allow_html=True)
                     else:
                         st.markdown(f'<span class="badge badge-error">✗ Failed: {r.get("error", "Unknown error")}</span>', unsafe_allow_html=True)
 
