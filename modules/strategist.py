@@ -168,8 +168,9 @@ H3s: use them where a section has 2+ distinct sub-points. Write H3s as human, sp
 For each H3, embed these callouts inline — only where they genuinely strengthen that specific section, not forced into every one:
 → `[STAT NEEDED: describe what type of stat would land here — e.g. "a survey on how often X happens" or "a study linking Y to Z outcome"]`
 → `[CASE STUDY: describe what kind of real-world example works here and why this section specifically benefits from one — e.g. "a brand that tried X and failed because Y" or "a creator who saw X% lift after doing Z"]`
+→ `[INTERNAL LINK OPPORTUNITY: suggest linking to a blog or page about X topic here — explain why it builds topical authority and/or keeps readers on site]`
 
-Do not cluster these at the end of a section. Place them at the exact point in the bullet list where the writer would reach for that data.
+Do not cluster these at the end of a section. Place them at the exact point in the bullet list where the writer would reach for that data or link.
 
 ---
 
