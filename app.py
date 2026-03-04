@@ -556,14 +556,28 @@ with st.sidebar:
     )
 
     st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
-    st.markdown('<div class="section-label">Power Words (optional)</div>', unsafe_allow_html=True)
-    st.markdown('<div style="font-size:0.78rem;color:#9999B8;margin-bottom:8px;">Paste your power word list — one per line or comma-separated. Claude uses these when writing title options.</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-label">Power Words</div>', unsafe_allow_html=True)
+    st.markdown('<div style="font-size:0.78rem;color:#9999B8;margin-bottom:8px;">Claude uses these when writing title options. Edit or add your own.</div>', unsafe_allow_html=True)
+    _DEFAULT_POWER_WORDS = (
+        "New, Free, Discover, Secret, Powerful, Top, Best, Latest, Bonus, Ultimate, "
+        "How to, Must-have, Popular, Transform, "
+        "Quick, Fast, Instantly, Today, In less than, Days, Hours, "
+        "Easy, Simple, Step-by-step, Made Easy, Simplified, Straightforward, Effortless, "
+        "All-inclusive, Cheat sheet, Clear, How-to, Roadmap, Blueprint, Steps, "
+        "Rare, Premium, Limited, Sensational, Unique, Exclusive, "
+        "Now, Limited Time, Only, Urgent, Last chance, Countdown, Don't miss out, Final, Hurry, "
+        "Save, Bargain, Bonus, Discount, Gift, Giveaway, Value, Profit, "
+        "Accredited, Approved, Best-selling, Case study, Certified, Expert, Guaranteed, "
+        "Lifetime, Money back, Zero risk, Proven, Research, Results, Scientifically proven, Tested, "
+        "Bizarre, Behind the scenes, Crazy, Confidential, Forgotten, Hidden, "
+        "Revealed, Insider, Little-known, Private, Shocking, Sneak peek"
+    )
     power_words = st.text_area(
         "Power words",
-        placeholder="e.g. proven, ultimate, secret, effortless, mistakes, truth, never, exactly, step-by-step",
-        height=100,
+        value=_DEFAULT_POWER_WORDS,
+        height=120,
         label_visibility="collapsed",
-        help="Power words make titles more clickable. Paste as many as you like."
+        help="Power words make titles more clickable. Edit freely."
     )
 
     st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
