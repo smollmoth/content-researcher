@@ -180,7 +180,9 @@ These should sound human. No "In today's world..." or "Have you ever wondered...
 
 Full H2/H3 structure. Every heading = a real blog heading, ready to publish. Not a label, not a placeholder.
 
-For each H2:
+Everything the writer needs lives inside this outline. Do not save authority notes, E-E-A-T signals, snippet targets, keyword placements, or competitor intel for a separate section — drop each one as an inline callout at the exact H2/H3 it belongs to.
+
+**For each H2:**
 
 **[Real blog heading — human, keyword-rich, clickable]** `[TAG]`
 *Payoff:* [one line — what does the reader walk away with?]
@@ -189,98 +191,57 @@ For each H2:
 - [specific thing to write]
 - [specific thing to write]
 
-Drop inline callouts at the exact bullet where they apply — not at the end:
+**Inline callouts — drop at the exact bullet where they apply:**
+
+Content callouts:
 - 💬 Reddit: "[real quote or language pattern from an actual thread]"
-- [STAT: what kind of data would land here, e.g. "% of people who X" or "study on Y"]
-- [ADD EXAMPLE: what kind of example — "a brand that tried X" / "someone who did Z and saw Y result"]
+- [STAT: what kind of data would land here and what it should prove]
+- [ADD EXAMPLE: what kind — "a brand that tried X" / "someone who did Z and saw Y result"]
+
+SEO & authority callouts (place inside each H2 where they apply — not at the end):
+- `[AUTHORITY: term1, term2, term3]` — entities and terms Google expects to see in this section to treat the page as authoritative; if skipped, topical coverage looks thin
+- `[KEYWORD: secondary keyword to use naturally here]` — keyword placement instruction for this section
+- `[SNIPPET TARGET: format as numbered list / definition box / table for: "exact PAA question"]` — format the opening of this section to win this featured snippet
+- `[EEAT: experience — add a first-hand anecdote here about X]` or `[EEAT: expertise — cite a study / official body on Y here]` or `[EEAT: trust — add a disclaimer / date stamp / methodology note here]`
+
+Competitor callouts:
+- `[STEAL: competitors do X well here — match it by doing Y]`
+- `[BEAT: competitor weakness — they're thin/wrong/missing Z here; exploit it by doing W]`
+
+Link callouts:
 - 🔗 Link: [internal topic to link to, and why it fits here]
-- `[SNIPPET TARGET: format as numbered list / definition box / table for: "exact PAA question"]`
 - > [brand or product angle bullet — leads with > when it's a recommendation or commercial angle]
 
-Tags (same line as H2 heading):
+**Tags (same line as H2 heading):**
 `[MUST COVER]` — skip it and you lose to competitors
 `[GAP]` — competitors miss this, real opportunity
 `[DIFFERENTIATOR]` — your angle, nobody else doing this
 `[USER QUESTION]` — directly answers a PAA or Reddit question
 
-H3s under each H2 where the section needs sub-points. Write H3s as real clickable headings too — "The 3 types that actually matter (and the ones to ignore)", not "Types of X".
+H3s under each H2 where the section needs sub-points. Write H3s as real clickable headings — "The 3 types that actually matter (and the ones to ignore)", not "Types of X". Apply the same inline callouts inside H3s where relevant.
 
 ---
 
-## 5. Topical Authority Map
+## 5. Voice Guide
 
-List the sub-topics, entities, and related terms this article MUST mention to be considered authoritative on the topic by Google.
-Group them by theme. For each cluster, one sentence on why Google expects to see this if we're serious about this topic.
-
-Format:
-**[Theme/Cluster]:** term1, term2, term3 — *why this matters for topical coverage*
-
-If you skip any of these, flag it: "Missing this signals to Google that this page doesn't fully cover the topic."
-
----
-
-## 6. E-E-A-T Injection Points
-
-Google needs to see Experience, Expertise, Authoritativeness, Trust. Tell the writer exactly where and how to inject each:
-
-- **Experience:** Which sections should include first-hand anecdotes or direct observations? What kind of personal experience would be credible here?
-- **Expertise:** Which claims need a citation? What types of sources does Google trust for this topic (studies, official bodies, recognised experts)?
-- **Authority:** What should the author intro/bio say to establish credibility for this specific topic?
-- **Trust:** Where should the writer add disclaimers, methodology notes, date stamps, or transparency signals?
+5 bullets. No headers. Write it like a sticky note on the writer's monitor — not a style guide.
+- Tone: one analogy ("write like you're explaining to a [specific type of person]...")
+- Phrases banned on this piece: give 3 real examples pulled from how competitors write it
+- How to handle jargon: is this audience fluent or not, and what's the rule?
+- What proof to reach for first: data, personal story, expert quote, or Reddit voice — and why for THIS topic
+- Last line goal: one sentence on what the reader should think, feel, or do differently after finishing
 
 ---
 
-## 7. SERP Feature Targets
+## 6. Pre-Publish Ranking Checklist
 
-Based on the PAA questions and query structure, list the specific featured snippet opportunities:
+12 items. Not generic SEO — specific to this article and topic. Things a writer can literally check off before hitting publish. At least 3 must target gaps competitors are missing.
 
-For each one:
-- **Question:** [exact question]
-- **Target format:** [definition box / numbered list / table / FAQ]
-- **Where in the article:** [which H2/H3]
-- **How to format it:** [e.g. "Open with a 40-60 word direct answer that starts with '{topic} is...' then expand below"]
+Include these 2 internal link items (fill in the bracketed topic based on the keyword):
+☐ [INTERNAL LINK OPPORTUNITY: link to your article on [most relevant sub-topic from this keyword cluster] here — builds topical authority and keeps the reader on site]
+☐ [INTERNAL LINK OPPORTUNITY: link to your article on [second related topic that naturally follows from this article's reader journey] here — builds topical authority and keeps the reader on site]
 
----
-
-## 8. On-Page SEO Placement Map
-
-Tell the writer exactly where to place things:
-
-- **Primary keyword** `{topic}`: H1 ✓, first 100 words ✓, at least one H2 ✓, meta description ✓, image alt text ✓
-- **Secondary keywords:** list 5-8 and which H2 each belongs in
-- **Hero image alt text:** suggest a specific alt text using the primary keyword naturally
-- **Schema type:** recommend one — Article / HowTo / FAQ / Review / other — and why
-- **Internal linking:** what topic clusters or related content this should link to (even if you don't know their exact URLs, describe the topic)
-- **Total word count target:** based on competitor depths, what's the right length to be comprehensive without padding?
-
----
-
-## 9. Competitor Intelligence — Steal & Beat
-
-**Steal these (3-5 things competitors do well that you must match):**
-Be specific. Not "they cover topic X" — say "Competitor A does Y in their intro and it works because Z. Do the same but go further by..."
-
-**Beat these (3-5 specific competitor weaknesses to exploit):**
-Where are the thin sections? The weak intros? The unanswered questions? Name them and say how to exploit each one.
-
----
-
-## 10. The Voice Guide
-
-5 bullets — how to write THIS article specifically:
-- Tone (give an analogy: "write like you're explaining to a [type of person]...")
-- Specific phrases to ban (give real examples based on how competitors write)
-- How to handle jargon for this topic's audience
-- What kind of proof to reach for first (data, stories, expert quotes, personal experience)
-- What the reader should think/feel/do differently after reading the last line
-
----
-
-## 11. Pre-Publish Ranking Checklist
-
-10 specific, actionable items. Not generic SEO — things specific to this article and topic.
-Things a writer can literally check off before hitting publish.
-At least 3 of these should be things competitors are missing that this article needs to get right.
+Also include: schema type recommendation (Article / HowTo / FAQ / Review — and why), hero image alt text suggestion using the primary keyword, and total target word count based on competitor depth.
 
 ---
 
