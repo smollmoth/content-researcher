@@ -556,6 +556,17 @@ with st.sidebar:
     )
 
     st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-label">Power Words (optional)</div>', unsafe_allow_html=True)
+    st.markdown('<div style="font-size:0.78rem;color:#9999B8;margin-bottom:8px;">Paste your power word list — one per line or comma-separated. Claude uses these when writing title options.</div>', unsafe_allow_html=True)
+    power_words = st.text_area(
+        "Power words",
+        placeholder="e.g. proven, ultimate, secret, effortless, mistakes, truth, never, exactly, step-by-step",
+        height=100,
+        label_visibility="collapsed",
+        help="Power words make titles more clickable. Paste as many as you like."
+    )
+
+    st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
     st.markdown('<div class="section-label">How it works</div>', unsafe_allow_html=True)
 
     steps_info = [
@@ -724,7 +735,9 @@ if run_btn and can_run:
             gap_summary=gap_summary,
             competitor_titles=competitor_titles,
             api_key=anthropic_key,
-            progress_callback=strategist_progress
+            power_words=power_words,
+            scout_data=scout_data if scout_data else None,
+            progress_callback=strategist_progress,
         )
         if error:
             st.error(f"Claude failed: {error}")

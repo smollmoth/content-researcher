@@ -185,10 +185,16 @@ def format_gap_summary(gap_analysis: dict, scout_data: Optional[dict] = None) ->
                 lines.append(f"- {s}")
 
         if scout_data.get('reddit_results'):
-            lines.append("\n### Reddit Discussions Found")
-            for r in scout_data['reddit_results'][:5]:
-                lines.append(f"- [{r['title']}]({r['url']})")
+            lines.append("\n### Reddit Discussions — Pain Points & Real Language")
+            for r in scout_data['reddit_results'][:8]:
+                lines.append(f"- **{r['title']}**")
                 if r.get('snippet'):
-                    lines.append(f"  *{r['snippet'][:150]}*")
+                    lines.append(f"  \"{r['snippet'][:400]}\"")
+
+        if scout_data.get('web_results'):
+            lines.append("\n### Top-Ranking Pages — Snippets")
+            for r in scout_data['web_results'][:5]:
+                if r.get('snippet'):
+                    lines.append(f"- **{r['title']}**: {r['snippet'][:250]}")
 
     return '\n'.join(lines)
