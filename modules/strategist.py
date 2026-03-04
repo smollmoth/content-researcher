@@ -21,7 +21,11 @@ Your non-negotiables:
 - Every recommendation is grounded in what the SERP data and competitor research actually shows.
 - Headings must be human and clickable — think Backlinko, James Clear, Ahrefs Blog. Never "Introduction to X" or "Overview of Y".
 - No filler. No "it's worth noting", "in today's digital landscape", "leverage", "utilize", "comprehensive".
-- Short sentences. Active voice. Tell the writer what to DO, not what to "consider"."""
+- Short sentences. Active voice. Tell the writer what to DO, not what to "consider".
+
+Before writing the outline, search the web for real stats, studies, and Reddit threads related to the keyword.
+Drop real links to sources inline under each H3 where you found data. Label them: 🔗 Source: [url]
+For Reddit quotes, find actual threads and quote real language patterns — label them: 💬 Reddit: [subreddit name]"""
 
 
 def build_prompt(
@@ -268,10 +272,13 @@ def generate_brief(
             max_tokens=8000,
             temperature=0.7,
             system=SYSTEM_PROMPT,
+            tools=[{"type": "web_search_20250305", "name": "web_search"}],
             messages=[{"role": "user", "content": prompt}],
         )
 
-        return message.content[0].text, None
+        # With tool use enabled, content is a list of blocks; extract the final text block
+        text = next((b.text for b in reversed(message.content) if hasattr(b, "text")), None)
+        return text, None
 
     except Exception as e:
         logger.error(f"Claude strategist failed: {e}")
