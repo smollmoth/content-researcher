@@ -20,6 +20,10 @@ from modules.scout import run_scout
 from modules.gap_finder import analyze_competitor_content, format_gap_summary
 from modules.strategist import generate_brief
 
+# ── Load keys from secrets (if configured) ────────────────────────────────────
+_secret_anthropic = st.secrets.get("ANTHROPIC_API_KEY", "")
+_secret_serper    = st.secrets.get("SERPER_API_KEY", "")
+
 # ── Page config ───────────────────────────────────────────────────────────────
 st.set_page_config(
     page_title="Content Researcher",
@@ -419,18 +423,28 @@ st.markdown("""
 # ── Sidebar ───────────────────────────────────────────────────────────────────
 with st.sidebar:
     st.markdown('<div class="section-label">API Keys</div>', unsafe_allow_html=True)
-    anthropic_key = st.text_input(
-        "Anthropic API Key",
-        type="password",
-        placeholder="sk-ant-...",
-        help="Get yours at console.anthropic.com"
-    )
-    serper_key = st.text_input(
-        "Serper API Key",
-        type="password",
-        placeholder="your-serper-key",
-        help="Get yours at serper.dev"
-    )
+
+    if _secret_anthropic:
+        anthropic_key = _secret_anthropic
+        st.markdown('<span class="badge badge-success">✓ Anthropic key configured</span>', unsafe_allow_html=True)
+    else:
+        anthropic_key = st.text_input(
+            "Anthropic API Key",
+            type="password",
+            placeholder="sk-ant-...",
+            help="Get yours at console.anthropic.com"
+        )
+
+    if _secret_serper:
+        serper_key = _secret_serper
+        st.markdown('<span class="badge badge-success">✓ Serper key configured</span>', unsafe_allow_html=True)
+    else:
+        serper_key = st.text_input(
+            "Serper API Key",
+            type="password",
+            placeholder="your-serper-key",
+            help="Get yours at serper.dev"
+        )
 
     st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
     st.markdown('<div class="section-label">Settings</div>', unsafe_allow_html=True)
