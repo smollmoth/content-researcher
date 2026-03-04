@@ -114,7 +114,10 @@ Answer these four things directly:
 ## 2. Title, Meta & URL
 
 **H1 options — give 3:**
-Each must include the target keyword naturally, use at least one power word from the list, and have a different emotional hook.
+Each title MUST use at least one power word from this list:
+New, Free, Discover, Secret, Powerful, Top, Best, Latest, Ultimate, How to, Easy, Simple, Step-by-step, Proven, Expert, Hidden, Revealed, Insider, Little-known, Quick, Instantly, Blueprint, Roadmap, Cheat sheet, Guaranteed, Results, Case study, Exclusive, Tested
+
+Each must also include the target keyword naturally and have a different emotional hook. Keep each title under 60 characters. Write them like a human headline writer, not an AI.
 
 Format:
 **Option 1 — [hook type]:** [Title]
