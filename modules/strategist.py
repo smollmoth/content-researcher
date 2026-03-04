@@ -115,6 +115,27 @@ Write the content brief using this exact structure. Be specific — reference ac
 
 ---
 
+## Funnel Stage
+
+Auto-detect: is this ToFu, MoFu, or BoFu based on the keyword?
+Write one sentence — what that means for THIS article specifically:
+- What's the writer's job here (educate, compare, convert)?
+- Should there be CTAs? How hard to push the product angle?
+- What does the reader need NEXT after this article?
+
+---
+
+## ICP Snapshot
+
+Based on the keyword and research, describe who is most likely searching this.
+Cover in 3-4 tight bullets:
+- Their job title or situation (be specific — not "marketers", say "solo founders running paid ads" or "HR managers at 50-person startups")
+- The exact problem they're trying to solve RIGHT NOW — not the topic in general, but what triggered the search today
+- What they've probably already tried that didn't work
+- What they need to believe by the end of the article to take the next step
+
+---
+
 ## 1. Search Intent & SERP Strategy
 
 Answer these four things directly:
