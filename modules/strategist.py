@@ -1,7 +1,6 @@
 """
 Claude Strategist Module
-Takes gap analysis + scout data and generates a full content brief
-with inline recommendations using Claude.
+Takes keyword research data and generates a Resource Bank + Content Brief.
 """
 import logging
 from anthropic import Anthropic
@@ -10,263 +9,296 @@ logger = logging.getLogger(__name__)
 
 MODEL = "claude-sonnet-4-6"
 
-SYSTEM_PROMPT = """You're a senior SEO strategist briefing a smart writer over Slack. Not writing a strategy doc — sending notes.
+SYSTEM_PROMPT = """You're a senior content strategist. Your job is to turn raw keyword research into two things:
+1. A usable Resource Bank — organised findings a writer can pull from directly
+2. A Content Brief — strategic guide for the article
 
-Tone: casual, direct, short bullets. Like a colleague who knows what they're doing and respects the writer's time.
+Tone: direct, specific, opinionated. No filler. No "it's worth noting". No "leverage".
 
-**How the output should feel:**
-- Conversational. First person where it helps. "Skip this if..." / "Do NOT do..." / "This one matters a lot."
-- Tight bullets, not paragraphs. If you catch yourself writing 3 sentences, cut to 1.
-- Opinionated. Say what will work and what won't. No hedging.
-- Never: "it's worth noting", "in today's digital landscape", "leverage", "utilize", "comprehensive guide", "delve".
+**For the Resource Bank:**
+- Pull out real quotes, real stats, real pain points from the research — not summaries
+- Attribute everything: where it came from (Reddit, news, G2, LinkedIn, etc.)
+- Flag the best ones clearly. A writer should be able to paste these straight into a draft.
 
-**H2s and H3s in the outline = real blog headings only.**
-Write them as if they're going live on the page. Human, natural, keyword-rich, clickable.
-NOT labels like "Topical Authority Map" or "Section 3: Overview".
-Think Backlinko, Ahrefs Blog, James Clear. "Why Your X Keeps Failing (And the Fix Nobody Talks About)" — that kind of thing.
+**For the Content Brief:**
+- H2s and H3s = real blog headings, ready to publish. Not labels.
+- Be opinionated about what to cover and what to skip.
+- Inline callouts at the exact point they apply:
+  💬 Reddit: "[real quote]"
+  [STAT: what kind, what it should prove]
+  [ADD EXAMPLE: what kind]
+  🔗 Link: [topic]
 
-**Power words to use naturally in title options and headings:**
+**Power words for titles:**
 New, Free, Discover, Secret, Powerful, Top, Best, Latest, Ultimate, How to, Easy, Simple,
-Step-by-step, Proven, Expert, Hidden, Revealed, Insider, Little-known, Quick, Instantly,
-Blueprint, Roadmap, Cheat sheet, Guaranteed, Results, Case study, Exclusive, Tested
+Step-by-step, Proven, Expert, Hidden, Revealed, Insider, Little-known, Quick, Blueprint,
+Roadmap, Cheat sheet, Guaranteed, Results, Case study, Exclusive, Tested
 
-**Inline callouts — use these inside the outline, at the exact point they apply:**
-- 💬 Reddit: "[quote]" — real language patterns from Reddit threads on this topic. Find actual quotes.
-- [STAT: find one about X] — flag where a specific stat is needed and what it should prove
-- [ADD EXAMPLE: what type] — flag where a personal example or case study would hit hardest, and why
-- 🔗 Link: [topic] — internal link suggestion, placed where it's actually relevant
-
-**Brand/product angles:**
-When a bullet is a brand or product recommendation angle, lead it with >
-
-**Before writing the outline:** search the web for real stats, studies, and Reddit threads on the keyword. Drop real source URLs inline where you found data: 🔗 Source: [url]"""
+**Before writing — search the web for real stats and studies on the keyword. Drop source URLs inline.**"""
 
 
-def build_prompt(
-    topic: str,
-    gap_summary: str,
-    competitor_titles: list[str],
-    power_words: str = "",
-    scout_data: dict | None = None,
-) -> str:
-    competitor_list = "\n".join(f"- {t}" for t in competitor_titles if t)
+def _build_prompt(topic: str, scout_data: dict, power_words: str = "") -> str:
+    lines = []
 
-    # Build rich Reddit section from scout data
-    reddit_block = ""
-    if scout_data and scout_data.get("reddit_results"):
-        reddit_lines = []
-        for r in scout_data["reddit_results"][:8]:
-            snippet = r.get("snippet", "").strip()
-            title = r.get("title", "").strip()
-            if title:
-                reddit_lines.append(f'  • "{title}"')
-            if snippet:
-                reddit_lines.append(f'    → {snippet[:300]}')
-        if reddit_lines:
-            reddit_block = "## Real Reddit Conversations (use these verbatim where relevant)\n" + "\n".join(reddit_lines)
+    # Related terms / keyword cluster
+    related = scout_data.get("related_terms", [])
+    if related:
+        lines.append("## Keyword Cluster")
+        for t in related[:15]:
+            lines.append(f"- {t}")
+        lines.append("")
 
-    # PAA questions
-    paa_block = ""
-    if scout_data and scout_data.get("people_also_ask"):
-        questions = "\n".join(f"- {q}" for q in scout_data["people_also_ask"])
-        paa_block = f"## Questions Real People Are Googling\n{questions}"
+    # PAA
+    paa = scout_data.get("people_also_ask", [])
+    if paa:
+        lines.append("## Questions People Are Googling (PAA)")
+        for q in paa:
+            lines.append(f"- {q}")
+        lines.append("")
 
-    # Web snippets for stat/context sourcing
-    web_block = ""
-    if scout_data and scout_data.get("web_results"):
-        web_lines = []
-        for r in scout_data["web_results"][:5]:
-            snippet = r.get("snippet", "").strip()
-            title = r.get("title", "").strip()
-            if title and snippet:
-                web_lines.append(f'  • [{title}]: "{snippet[:200]}"')
-        if web_lines:
-            web_block = "## What's Currently Ranking (snippets for context)\n" + "\n".join(web_lines)
+    # Reddit
+    reddit = scout_data.get("reddit_results", [])
+    if reddit:
+        lines.append("## Reddit Discussions")
+        for r in reddit[:8]:
+            lines.append(f'**{r["title"]}**')
+            if r.get("snippet"):
+                lines.append(f'  → {r["snippet"][:400]}')
+            lines.append(f'  URL: {r["url"]}')
+        lines.append("")
 
-    # Power words block
-    power_words_block = ""
+    # LinkedIn
+    linkedin = scout_data.get("linkedin_results", [])
+    if linkedin:
+        lines.append("## LinkedIn Posts & Articles")
+        for r in linkedin[:6]:
+            lines.append(f'**{r["title"]}**')
+            if r.get("snippet"):
+                lines.append(f'  → {r["snippet"][:300]}')
+        lines.append("")
+
+    # News
+    news = scout_data.get("news_results", [])
+    if news:
+        lines.append("## Industry News")
+        for r in news[:8]:
+            date = f' ({r["date"]})' if r.get("date") else ""
+            lines.append(f'**{r["title"]}**{date}')
+            if r.get("snippet"):
+                lines.append(f'  → {r["snippet"][:300]}')
+            lines.append(f'  URL: {r["url"]}')
+        lines.append("")
+
+    # Reviews
+    reviews = scout_data.get("review_results", [])
+    if reviews:
+        lines.append("## User Reviews (G2 / Capterra / Trustpilot)")
+        for r in reviews[:6]:
+            lines.append(f'**{r["title"]}**')
+            if r.get("snippet"):
+                lines.append(f'  → {r["snippet"][:300]}')
+        lines.append("")
+
+    # Twitter / X
+    twitter = scout_data.get("twitter_results", [])
+    if twitter:
+        lines.append("## X / Twitter Discussions")
+        for r in twitter[:6]:
+            lines.append(f'**{r["title"]}**')
+            if r.get("snippet"):
+                lines.append(f'  → {r["snippet"][:200]}')
+        lines.append("")
+
+    # Forums
+    forums = scout_data.get("forum_results", [])
+    if forums:
+        lines.append("## Forum & Discussion Boards")
+        for r in forums[:6]:
+            lines.append(f'**{r["title"]}**')
+            if r.get("snippet"):
+                lines.append(f'  → {r["snippet"][:300]}')
+        lines.append("")
+
+    # Web snippets
+    web = scout_data.get("web_results", [])
+    if web:
+        lines.append("## Top-Ranking Web Pages (for context)")
+        for r in web[:6]:
+            lines.append(f'**{r["title"]}** — {r["url"]}')
+            if r.get("snippet"):
+                lines.append(f'  → {r["snippet"][:200]}')
+        lines.append("")
+
+    # Power words
     if power_words and power_words.strip():
-        power_words_block = f"""## Power Words to Use in Titles
-Use these words when generating title options — pick the ones that match the emotional hook:
-{power_words.strip()}
-"""
+        lines.append(f"## Power Words for Titles\n{power_words.strip()}\n")
 
-    return f"""Here's the research. Write the content brief.
+    research_block = "\n".join(lines)
 
-## Topic / Target Keyword
-{topic}
+    return f"""Keyword: **{topic}**
 
-## Competitor Titles (what's already ranking)
-{competitor_list}
+Here's the raw research collected across sources:
 
-{power_words_block}
-{reddit_block}
-
-{paa_block}
-
-{web_block}
-
-## Full Competitive Gap Analysis
-{gap_summary}
+{research_block}
 
 ---
 
-Write the content brief using this exact structure. Be specific — reference actual findings from the research above. Sound like a person, not a tool.
+Write two sections:
+
+---
+
+# PART 1 — RESOURCE BANK
+
+A curated set of datapoints the writer can reference directly. Organise by source type. For each item worth keeping, include:
+- The actual quote, stat, or insight (not a paraphrase — the real thing)
+- Where it came from
+- Why it's useful / where in the article it fits
+
+Use these categories:
+**Data & Studies** — stats, reports, original research worth citing
+**Industry News** — recent developments that give the article timeliness
+**Reddit & Forum Voice** — real user language, pain points, frustrations
+**LinkedIn & Practitioner Takes** — expert angles, thought leadership
+**Review Insights (G2 / Capterra / Trustpilot)** — user complaints and praise in their own words
+**X / Twitter Angles** — niche takes, debate, breaking angles
+
+Flag the top 3 most useful finds with ⭐
+
+---
+
+# PART 2 — CONTENT BRIEF
+
+## Keyword Cluster
+
+List: the primary keyword + all related terms worth targeting in this article (pulled from the research above). Mark the primary. Flag which ones belong in H2s, which in H3s, which as body mentions only.
 
 ---
 
 ## Funnel Stage
 
-Auto-detect: is this ToFu, MoFu, or BoFu based on the keyword?
-Write one sentence — what that means for THIS article specifically:
-- What's the writer's job here (educate, compare, convert)?
-- Should there be CTAs? How hard to push the product angle?
-- What does the reader need NEXT after this article?
+Auto-detect ToFu / MoFu / BoFu. One sentence on what that means for this article specifically:
+- Writer's job (educate, compare, convert)?
+- CTAs — how hard to push?
+- What does the reader need next after this?
 
 ---
 
 ## ICP Snapshot
 
-Based on the keyword and research, describe who is most likely searching this.
-Cover in 3-4 tight bullets:
-- Their job title or situation (be specific — not "marketers", say "solo founders running paid ads" or "HR managers at 50-person startups")
-- The exact problem they're trying to solve RIGHT NOW — not the topic in general, but what triggered the search today
-- What they've probably already tried that didn't work
-- What they need to believe by the end of the article to take the next step
+3-4 tight bullets:
+- Job title or situation (specific, not "marketers")
+- The exact problem that triggered the search today
+- What they've already tried that didn't work
+- What they need to believe by the end to take the next step
 
 ---
 
 ## 1. Search Intent & SERP Strategy
 
-Answer these four things directly:
-- **Intent:** What is the reader actually trying to DO? (learn, compare, buy, fix a problem?) Be specific — not just "informational".
-- **Format Google rewards:** Based on what's ranking, what content format wins here — step-by-step guide, listicle, deep explainer, comparison, definition-first? Why?
-- **Content depth needed:** Look at competitor word counts. What's the minimum to compete, and where should we go deeper than everyone else?
-- **The reader's real frustration:** What has the reader already tried or read that didn't work? What do they want to know that nobody is telling them clearly?
+- **Intent:** What is the reader trying to DO? (specific)
+- **Format Google rewards:** step-by-step, listicle, deep explainer, comparison? Why?
+- **Content depth:** What's the minimum to compete? Where to go deeper?
+- **Reader's real frustration:** What has nobody told them clearly yet?
 
 ---
 
 ## 2. Title, Meta & URL
 
 **H1 options — give 3:**
-Each title MUST use at least one power word from this list:
-New, Free, Discover, Secret, Powerful, Top, Best, Latest, Ultimate, How to, Easy, Simple, Step-by-step, Proven, Expert, Hidden, Revealed, Insider, Little-known, Quick, Instantly, Blueprint, Roadmap, Cheat sheet, Guaranteed, Results, Case study, Exclusive, Tested
-
-Each must also include the target keyword naturally and have a different emotional hook. Keep each title under 60 characters. Write them like a human headline writer, not an AI.
+Each must use at least one power word, include the keyword naturally, and have a different emotional hook. Under 60 chars each.
 
 Format:
 **Option 1 — [hook type]:** [Title]
-*Why this works:* [one sentence — what SERP gap or emotional trigger does this hit?]
+*Why this works:* [one sentence]
 
-**Title tag:** (can be shorter than H1 if needed — max 60 chars, keyword near the front)
-
-**Meta description:** (max 155 chars — includes keyword, has a clear benefit or CTA, doesn't just repeat the title)
-
+**Title tag:** (max 60 chars, keyword near front)
+**Meta description:** (max 155 chars — benefit or CTA, doesn't just repeat title)
 **URL slug:** (short, keyword-first, no stop words)
 
 ---
 
 ## 3. Opening Paragraph Options
 
-Give 2 actual draft opening paragraphs the writer can steal or riff on.
-- Option A: leads with a surprising stat or counterintuitive claim
-- Option B: leads with a relatable frustration or scenario the reader recognises immediately
+2 actual draft openings the writer can steal:
+- Option A: surprising stat or counterintuitive claim
+- Option B: relatable frustration or scenario
 
-These should sound human. No "In today's world..." or "Have you ever wondered...". Get to the point in sentence one.
+Sound human. Get to the point in sentence one.
 
 ---
 
 ## 4. The Outline
 
-Full H2/H3 structure. Every heading = a real blog heading, ready to publish. Not a label, not a placeholder.
-
-Everything the writer needs lives inside this outline. Do not save authority notes, E-E-A-T signals, snippet targets, keyword placements, or competitor intel for a separate section — drop each one as an inline callout at the exact H2/H3 it belongs to.
+Full H2/H3 structure. Every heading = real blog heading, ready to publish.
 
 **For each H2:**
 
-**[Real blog heading — human, keyword-rich, clickable]** `[TAG]`
-*Payoff:* [one line — what does the reader walk away with?]
-*~X words* | *Open with:* [stat / Reddit quote / question / micro-story]
-- [specific thing to write — WHY it matters, what most people get wrong]
+**[Real heading]** `[TAG]`
+*Payoff:* [one line]
+*~X words* | *Open with:* [stat / Reddit quote / question]
+- [specific thing to write — WHY it matters]
 - [specific thing to write]
-- [specific thing to write]
 
-**Inline callouts — drop at the exact bullet where they apply:**
+Inline callouts at the exact bullet where they apply:
+- 💬 Reddit: "[real quote from the research above]"
+- [STAT: what kind, what it should prove]
+- [ADD EXAMPLE: what kind and why]
+- `[AUTHORITY: entities Google expects here]`
+- `[KEYWORD: secondary keyword for this section]`
+- `[SNIPPET TARGET: format for: "exact PAA question"]`
+- `[EEAT: experience/expertise/trust — what specifically]`
+- `[STEAL: what competitors do well here]`
+- `[BEAT: competitor weakness to exploit]`
+- 🔗 Link: [internal topic and why]
+- > [brand/product angle bullet]
 
-Content callouts:
-- 💬 Reddit: "[real quote or language pattern from an actual thread]"
-- [STAT: what kind of data would land here and what it should prove]
-- [ADD EXAMPLE: what kind — "a brand that tried X" / "someone who did Z and saw Y result"]
-
-SEO & authority callouts (place inside each H2 where they apply — not at the end):
-- `[AUTHORITY: term1, term2, term3]` — entities and terms Google expects to see in this section to treat the page as authoritative; if skipped, topical coverage looks thin
-- `[KEYWORD: secondary keyword to use naturally here]` — keyword placement instruction for this section
-- `[SNIPPET TARGET: format as numbered list / definition box / table for: "exact PAA question"]` — format the opening of this section to win this featured snippet
-- `[EEAT: experience — add a first-hand anecdote here about X]` or `[EEAT: expertise — cite a study / official body on Y here]` or `[EEAT: trust — add a disclaimer / date stamp / methodology note here]`
-
-Competitor callouts:
-- `[STEAL: competitors do X well here — match it by doing Y]`
-- `[BEAT: competitor weakness — they're thin/wrong/missing Z here; exploit it by doing W]`
-
-Link callouts:
-- 🔗 Link: [internal topic to link to, and why it fits here]
-- > [brand or product angle bullet — leads with > when it's a recommendation or commercial angle]
-
-**Tags (same line as H2 heading):**
-`[MUST COVER]` — skip it and you lose to competitors
-`[GAP]` — competitors miss this, real opportunity
-`[DIFFERENTIATOR]` — your angle, nobody else doing this
-`[USER QUESTION]` — directly answers a PAA or Reddit question
-
-H3s under each H2 where the section needs sub-points. Write H3s as real clickable headings — "The 3 types that actually matter (and the ones to ignore)", not "Types of X". Apply the same inline callouts inside H3s where relevant.
+Tags (same line as H2):
+`[MUST COVER]` `[GAP]` `[DIFFERENTIATOR]` `[USER QUESTION]`
 
 ---
 
 ## 5. Voice Guide
 
-5 bullets. No headers. Write it like a sticky note on the writer's monitor — not a style guide.
-- Tone: one analogy ("write like you're explaining to a [specific type of person]...")
-- Phrases banned on this piece: give 3 real examples pulled from how competitors write it
-- How to handle jargon: is this audience fluent or not, and what's the rule?
-- What proof to reach for first: data, personal story, expert quote, or Reddit voice — and why for THIS topic
-- Last line goal: one sentence on what the reader should think, feel, or do differently after finishing
+5 tight bullets — like a sticky note on the writer's monitor:
+- Tone: one analogy
+- Phrases banned: 3 real examples from how this topic usually gets written
+- Jargon: is the audience fluent or not, what's the rule?
+- Proof to reach for first: data, story, expert quote, or Reddit voice — and why for THIS topic
+- Last line goal: what the reader thinks, feels, or does differently after finishing
 
 ---
 
-## 6. Pre-Publish Ranking Checklist
+## 6. Pre-Publish Checklist
 
-12 items. Not generic SEO — specific to this article and topic. Things a writer can literally check off before hitting publish. At least 3 must target gaps competitors are missing.
+12 items specific to this article. At least 3 target gaps in the current SERP. Things a writer can literally check off.
 
-Include these 2 internal link items (fill in the bracketed topic based on the keyword):
-☐ [INTERNAL LINK OPPORTUNITY: link to your article on [most relevant sub-topic from this keyword cluster] here — builds topical authority and keeps the reader on site]
-☐ [INTERNAL LINK OPPORTUNITY: link to your article on [second related topic that naturally follows from this article's reader journey] here — builds topical authority and keeps the reader on site]
-
-Also include: schema type recommendation (Article / HowTo / FAQ / Review — and why), hero image alt text suggestion using the primary keyword, and total target word count based on competitor depth.
+Include:
+☐ [INTERNAL LINK OPPORTUNITY: link to article on [most relevant sub-topic] — builds topical authority]
+☐ [INTERNAL LINK OPPORTUNITY: link to article on [second related topic from reader journey]]
+Plus: schema type (Article / HowTo / FAQ / Review — why), hero image alt text with primary keyword, total target word count.
 
 ---
 
-End with one sentence: the single most important thing that will determine whether this article ranks or not."""
+End with one sentence: the single most important thing that will determine whether this article ranks."""
 
 
 def generate_brief(
     topic: str,
-    gap_summary: str,
-    competitor_titles: list[str],
+    scout_data: dict,
     api_key: str,
     power_words: str = "",
-    scout_data: dict | None = None,
     progress_callback=None,
 ) -> tuple[str | None, str | None]:
     """
-    Generate a content brief using Claude.
+    Generate a Resource Bank + Content Brief using Claude.
     Returns (brief_text, error).
     """
     try:
         client = Anthropic(api_key=api_key)
-        prompt = build_prompt(topic, gap_summary, competitor_titles, power_words, scout_data)
+        prompt = _build_prompt(topic, scout_data, power_words)
 
         if progress_callback:
-            progress_callback("Claude is reading the research and writing your brief...")
+            progress_callback("Claude is reading the research and building your resource bank + brief...")
 
         message = client.messages.create(
             model=MODEL,
@@ -277,7 +309,6 @@ def generate_brief(
             messages=[{"role": "user", "content": prompt}],
         )
 
-        # Web search produces interleaved text + tool_use blocks; join all text blocks in order
         text = "\n\n".join(b.text for b in message.content if hasattr(b, "text") and b.text.strip())
         return text or None, None
 
