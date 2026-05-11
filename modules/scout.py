@@ -60,7 +60,7 @@ def _parse_related(results: dict) -> list[str]:
 
 def run_scout(topic: str, api_key: str, progress_callback=None) -> dict:
     """
-    Run full keyword-based research across all sources.
+    Run full topic-based research across all sources.
     Returns structured data organised by source type.
     """
     data = {
@@ -71,6 +71,7 @@ def run_scout(topic: str, api_key: str, progress_callback=None) -> dict:
         "review_results": [],
         "twitter_results": [],
         "forum_results": [],
+        "blog_results": [],
         "people_also_ask": [],
         "related_searches": [],
         "related_terms": [],
@@ -81,19 +82,19 @@ def run_scout(topic: str, api_key: str, progress_callback=None) -> dict:
             progress_callback(msg)
 
     # 1. Web search — also grabs PAA and related searches
-    log("Searching Google...")
+    log("Searching Google (web + PAA + related)...")
     raw = _serper_search(topic, api_key, num=10)
     data["web_results"] = _parse_organic(raw, "web")
     data["people_also_ask"] = _parse_paa(raw)
     data["related_searches"] = _parse_related(raw)
     data["related_terms"] = list(dict.fromkeys(data["related_searches"] + data["people_also_ask"]))
 
-    # 2. Reddit
+    # 2. Reddit — via Google site filter (mirrors manual reddit.com search)
     log("Searching Reddit discussions...")
     raw_reddit = _serper_search(f"site:reddit.com {topic}", api_key, num=10)
     data["reddit_results"] = _parse_organic(raw_reddit, "reddit")
 
-    # 3. LinkedIn posts and articles
+    # 3. LinkedIn posts and articles — practitioner takes & thought leadership
     log("Searching LinkedIn...")
     raw_li = _serper_search(
         f'site:linkedin.com/posts OR site:linkedin.com/pulse {topic}',
@@ -101,12 +102,12 @@ def run_scout(topic: str, api_key: str, progress_callback=None) -> dict:
     )
     data["linkedin_results"] = _parse_organic(raw_li, "linkedin")
 
-    # 4. Industry news
+    # 4. Industry news — recent developments and trend pieces
     log("Searching industry news...")
     raw_news = _serper_search(topic, api_key, num=10, endpoint=SERPER_NEWS_URL)
     data["news_results"] = _parse_news(raw_news)
 
-    # 5. User reviews — G2, Capterra, Trustpilot
+    # 5. User reviews — G2, Capterra, Trustpilot: surface real-world friction
     log("Searching reviews (G2, Capterra, Trustpilot)...")
     raw_reviews = _serper_search(
         f'(site:g2.com OR site:capterra.com OR site:trustpilot.com) {topic}',
@@ -114,19 +115,52 @@ def run_scout(topic: str, api_key: str, progress_callback=None) -> dict:
     )
     data["review_results"] = _parse_organic(raw_reviews, "review")
 
-    # 6. X / Twitter
+    # 6. X / Twitter — niche takes and breaking angles
     log("Searching X (Twitter)...")
     raw_tw = _serper_search(f"site:twitter.com OR site:x.com {topic}", api_key, num=8)
     data["twitter_results"] = _parse_organic(raw_tw, "twitter")
 
-    # 7. Forums and discussion boards
-    log("Searching forums & discussions...")
-    raw_forums = _serper_search(f"{topic} forum discussion", api_key, num=8)
-    # Filter out Reddit duplicates
+    # 7. Google Discussions & forums — Quora, HackerNews, community boards
+    # Mirrors the Google "Discussions & forums" filter for non-Reddit community voice
+    log("Searching Google Discussions & forums...")
+    raw_forums = _serper_search(
+        f'(site:quora.com OR site:news.ycombinator.com OR site:producthunt.com OR site:indiehackers.com OR site:community.hubspot.com) {topic}',
+        api_key, num=8
+    )
     reddit_urls = {r["url"] for r in data["reddit_results"]}
     data["forum_results"] = [
         r for r in _parse_organic(raw_forums, "forum")
         if r["url"] not in reddit_urls and "reddit.com" not in r["url"]
     ]
+    # Fall back to a broader discussion query if the targeted search returned little
+    if len(data["forum_results"]) < 3:
+        raw_forums_broad = _serper_search(
+            f'{topic} discussion community -site:reddit.com -site:twitter.com -site:x.com',
+            api_key, num=8
+        )
+        seen = {r["url"] for r in data["forum_results"]} | reddit_urls
+        data["forum_results"] += [
+            r for r in _parse_organic(raw_forums_broad, "forum")
+            if r["url"] not in seen and "reddit.com" not in r["url"]
+        ]
+
+    # 8. Industry blogs & newsletters — Substack, Medium, surveys, original reports
+    log("Searching industry blogs, newsletters & reports...")
+    raw_blogs = _serper_search(
+        f'(site:substack.com OR site:medium.com) {topic}',
+        api_key, num=6
+    )
+    data["blog_results"] = _parse_organic(raw_blogs, "blog")
+    # Supplement with recent surveys/reports if blog results are thin
+    if len(data["blog_results"]) < 3:
+        raw_reports = _serper_search(
+            f'{topic} survey OR report OR research OR "new data" 2025 OR 2026',
+            api_key, num=6
+        )
+        web_urls = {r["url"] for r in data["web_results"]}
+        data["blog_results"] += [
+            r for r in _parse_organic(raw_reports, "blog")
+            if r["url"] not in web_urls
+        ]
 
     return data

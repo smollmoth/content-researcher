@@ -1,12 +1,12 @@
 """
-Content Researcher
-Keyword-driven research tool: finds related terms, collects datapoints across
-Reddit, LinkedIn, news, reviews, and forums, then generates a Resource Bank
-and content brief using Claude.
+Editorial Research Strategist
+Topic-driven research tool: surfaces debates, practitioner opinions, and fresh
+angles across Reddit, LinkedIn, news, reviews, and forums — then Claude builds
+a thesis-first editorial brief.
 
 Pipeline:
   1. Scout  — searches web, Reddit, LinkedIn, news, G2/Capterra, Twitter, forums
-  2. Brief  — Claude builds Resource Bank + Content Brief from all findings
+  2. Brief  — Claude builds curated Resource Bank + Editorial Brief from findings
 """
 import streamlit as st
 import json
@@ -20,8 +20,8 @@ _secret_serper    = st.secrets.get("SERPER_API_KEY", "")
 
 # ── Page config ───────────────────────────────────────────────────────────────
 st.set_page_config(
-    page_title="Content Researcher",
-    page_icon="🔬",
+    page_title="Editorial Strategist",
+    page_icon="✍️",
     layout="wide"
 )
 
@@ -473,9 +473,9 @@ with st.sidebar:
         )
 
     st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
-    st.markdown('<div class="section-label">Power Words</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-label">Title Power Words</div>', unsafe_allow_html=True)
     st.markdown(
-        '<div style="font-size:0.78rem;color:#9999B8;margin-bottom:8px;">Claude uses these when writing title options.</div>',
+        '<div style="font-size:0.78rem;color:#9999B8;margin-bottom:8px;">Claude uses these sparingly when writing title options.</div>',
         unsafe_allow_html=True
     )
     _DEFAULT_POWER_WORDS = (
@@ -497,10 +497,10 @@ with st.sidebar:
     st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
     st.markdown('<div class="section-label">How it works</div>', unsafe_allow_html=True)
     for icon, text in [
-        ("🔍", "Scout web, Reddit, LinkedIn, news"),
-        ("💬", "Find real user language & pain points"),
-        ("📰", "Surface studies, reviews & forum takes"),
-        ("📋", "Claude builds Resource Bank + Brief"),
+        ("🔍", "Surface debates, tensions & fresh angles"),
+        ("💬", "Find practitioner opinions & case studies"),
+        ("📰", "Identify what changed recently"),
+        ("✍️", "Claude builds thesis-first editorial brief"),
     ]:
         st.markdown(f"""
         <div class="pipeline-step">
@@ -522,15 +522,15 @@ st.markdown('<div style="height:24px;"></div>', unsafe_allow_html=True)
 # ── Hero ──────────────────────────────────────────────────────────────────────
 st.markdown("""
 <div class="hero">
-    <div class="hero-eyebrow">AI-Powered Research</div>
-    <h1>Content Researcher</h1>
-    <p>Enter a keyword. We'll search Reddit, LinkedIn, news, reviews, and forums — then Claude builds you a Resource Bank and full content brief.</p>
+    <div class="hero-eyebrow">Editorial Research Strategist</div>
+    <h1>Find the argument.<br>Write the article.</h1>
+    <p>Enter a topic. We'll surface the debates, practitioner takes, and fresh angles across Reddit, LinkedIn, news, and forums — then Claude builds a thesis-first editorial brief.</p>
     <div class="hero-pills">
-        <span class="hero-pill">🔍 Keyword Research</span>
-        <span class="hero-pill">💬 Reddit & Forums</span>
-        <span class="hero-pill">🏢 LinkedIn & Reviews</span>
-        <span class="hero-pill">📰 Industry News</span>
-        <span class="hero-pill">📋 Resource Bank + Brief</span>
+        <span class="hero-pill">✍️ Thesis Generation</span>
+        <span class="hero-pill">💬 Practitioner Voice</span>
+        <span class="hero-pill">⚡ Industry Debates</span>
+        <span class="hero-pill">📰 What Changed Recently</span>
+        <span class="hero-pill">📋 Editorial Brief</span>
     </div>
 </div>
 """, unsafe_allow_html=True)
@@ -538,15 +538,15 @@ st.markdown("""
 # ── Keyword input ─────────────────────────────────────────────────────────────
 st.markdown("""
 <div class="card">
-    <div class="card-title">Your Keyword</div>
-    <div class="card-heading">What are you writing about?</div>
-    <div class="card-sub">Enter your target keyword or topic. We'll find related terms and collect datapoints across the web.</div>
+    <div class="card-title">Your Topic</div>
+    <div class="card-heading">What's the story?</div>
+    <div class="card-sub">Enter a topic or question. We'll find the debates, evidence, and angles that make it worth writing.</div>
 </div>
 """, unsafe_allow_html=True)
 
 topic = st.text_input(
-    "Target Keyword",
-    placeholder="e.g. content gap analysis",
+    "Topic",
+    placeholder="e.g. content gap analysis, AI in hiring, B2B influencer marketing",
     label_visibility="collapsed"
 )
 
@@ -557,7 +557,7 @@ can_run = bool(topic and keys_ok)
 col_btn, col_hint = st.columns([1, 2])
 with col_btn:
     run_btn = st.button(
-        "🚀  Start Research",
+        "🔍  Find the Angle",
         type="primary",
         disabled=not can_run,
         help="Fill in a keyword and both API keys to start"
@@ -579,28 +579,29 @@ if run_btn and can_run:
     st.session_state.pipeline_step = 1
     render_progress(progress_placeholder, 1)
 
-    with st.status("🔍 Researching across sources...", expanded=True) as status1:
+    with st.status("🔍 Gathering research across sources...", expanded=True) as status1:
         def scout_progress(msg):
             st.write(f"→ {msg}")
 
         scout_data = run_scout(topic, serper_key, progress_callback=scout_progress)
 
-        st.write(f"📰 {len(scout_data.get('web_results', []))} web results")
+        st.write(f"🌐 {len(scout_data.get('web_results', []))} web results")
         st.write(f"💬 {len(scout_data.get('reddit_results', []))} Reddit threads")
         st.write(f"🏢 {len(scout_data.get('linkedin_results', []))} LinkedIn posts")
         st.write(f"📰 {len(scout_data.get('news_results', []))} news articles")
         st.write(f"⭐ {len(scout_data.get('review_results', []))} reviews")
         st.write(f"🐦 {len(scout_data.get('twitter_results', []))} X/Twitter results")
-        st.write(f"💬 {len(scout_data.get('forum_results', []))} forum results")
+        st.write(f"💬 {len(scout_data.get('forum_results', []))} forum & community results")
+        st.write(f"📝 {len(scout_data.get('blog_results', []))} blog/newsletter/report results")
         st.write(f"❓ {len(scout_data.get('people_also_ask', []))} PAA questions")
-        st.write(f"🔗 {len(scout_data.get('related_terms', []))} related terms")
+        st.write(f"🔗 {len(scout_data.get('related_terms', []))} topic signals")
         status1.update(label="✅ Step 1 complete — Research gathered", state="complete")
 
     # STEP 2: Brief
     st.session_state.pipeline_step = 2
     render_progress(progress_placeholder, 2)
 
-    with st.status("📋 Generating Resource Bank + Brief with Claude...", expanded=True) as status2:
+    with st.status("✍️ Building editorial brief with Claude...", expanded=True) as status2:
         def strategist_progress(msg):
             st.write(f"→ {msg}")
 
@@ -615,7 +616,7 @@ if run_btn and can_run:
             st.error(f"Claude failed: {error}")
             status2.update(label="❌ Step 2 failed", state="error")
         else:
-            status2.update(label="✅ Step 2 complete — Resource Bank + Brief ready", state="complete")
+            status2.update(label="✅ Step 2 complete — Editorial brief ready", state="complete")
 
     st.session_state.pipeline_step = 3
     render_progress(progress_placeholder, 3)
@@ -623,42 +624,43 @@ if run_btn and can_run:
     # ── Results ───────────────────────────────────────────────────────────────
     if brief:
         st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
-        st.success("🎉 Research complete! Your Resource Bank and content brief are ready.")
+        st.success("✍️ Editorial brief ready. The thesis, debates, and angles are below.")
 
         # Metrics
         st.markdown(f"""
         <div class="metric-grid">
             <div class="metric-card">
-                <div class="metric-number">{len(scout_data.get('related_terms', []))}</div>
-                <div class="metric-label">Related Terms</div>
+                <div class="metric-number">{len(scout_data.get('reddit_results', []))}</div>
+                <div class="metric-label">Practitioner Voices</div>
             </div>
             <div class="metric-card">
-                <div class="metric-number">{len(scout_data.get('reddit_results', []))}</div>
-                <div class="metric-label">Reddit Threads</div>
+                <div class="metric-number">{len(scout_data.get('linkedin_results', []))}</div>
+                <div class="metric-label">Expert Takes</div>
             </div>
             <div class="metric-card">
                 <div class="metric-number">{len(scout_data.get('news_results', []))}</div>
-                <div class="metric-label">News Articles</div>
+                <div class="metric-label">Recent Developments</div>
             </div>
             <div class="metric-card">
-                <div class="metric-number">{len(scout_data.get('review_results', []))}</div>
-                <div class="metric-label">User Reviews</div>
+                <div class="metric-number">{len(scout_data.get('blog_results', []))}</div>
+                <div class="metric-label">Blogs & Reports</div>
             </div>
             <div class="metric-card">
                 <div class="metric-number">{len(scout_data.get('people_also_ask', []))}</div>
-                <div class="metric-label">PAA Questions</div>
+                <div class="metric-label">Audience Questions</div>
             </div>
         </div>
         """, unsafe_allow_html=True)
 
         # Tabs
-        tab_brief, tab_web, tab_reddit, tab_social, tab_news, tab_reviews = st.tabs([
-            "📋  Brief",
-            "🔍  Web",
-            "💬  Reddit",
-            "🏢  LinkedIn & X",
-            "📰  News",
-            "⭐  Reviews",
+        tab_brief, tab_web, tab_reddit, tab_social, tab_news, tab_blogs, tab_reviews = st.tabs([
+            "✍️  Editorial Brief",
+            "🔍  Context",
+            "💬  Practitioner Voice",
+            "🏢  Expert Takes",
+            "📰  What Changed",
+            "📝  Blogs & Reports",
+            "⭐  Real-World Friction",
         ])
 
         # ── Brief ─────────────────────────────────────────────────────────────
@@ -674,9 +676,9 @@ if run_btn and can_run:
             with col_a:
                 st.markdown("""
                 <div class="card">
-                    <div class="card-title">Related Terms</div>
-                    <div class="card-heading">Keyword cluster</div>
-                    <div class="card-sub">Related searches and PAA questions — your topic cluster.</div>
+                    <div class="card-title">Topic Signals</div>
+                    <div class="card-heading">Adjacent angles & questions</div>
+                    <div class="card-sub">What surrounds this topic — useful for finding the debates and gaps.</div>
                 """, unsafe_allow_html=True)
                 chips = ''.join(
                     f'<span class="chip chip-purple">{t}</span>'
@@ -687,9 +689,9 @@ if run_btn and can_run:
 
                 st.markdown("""
                 <div class="card">
-                    <div class="card-title">People Also Ask</div>
-                    <div class="card-heading">Questions from Google</div>
-                    <div class="card-sub">Real questions people search for on this topic.</div>
+                    <div class="card-title">Audience Questions</div>
+                    <div class="card-heading">What people are actually asking</div>
+                    <div class="card-sub">Curiosity and tension signals — not FAQ targets.</div>
                 """, unsafe_allow_html=True)
                 for q in scout_data.get('people_also_ask', []):
                     st.markdown(f'<div class="result-card"><div class="result-card-title">❓ {q}</div></div>', unsafe_allow_html=True)
@@ -698,9 +700,9 @@ if run_btn and can_run:
             with col_b:
                 st.markdown("""
                 <div class="card">
-                    <div class="card-title">Top Web Results</div>
-                    <div class="card-heading">Currently ranking pages</div>
-                    <div class="card-sub">The pages Google currently ranks for this keyword.</div>
+                    <div class="card-title">What's Already Out There</div>
+                    <div class="card-heading">Current coverage</div>
+                    <div class="card-sub">Use this to identify what's been said to death — and what's missing.</div>
                 """, unsafe_allow_html=True)
                 for r in scout_data.get('web_results', []):
                     st.markdown(f"""
@@ -723,8 +725,8 @@ if run_btn and can_run:
                 st.markdown("""
                 <div class="card">
                     <div class="card-title">Reddit Threads</div>
-                    <div class="card-heading">Community discussions</div>
-                    <div class="card-sub">Real user language, pain points, and questions.</div>
+                    <div class="card-heading">Practitioner voice</div>
+                    <div class="card-sub">Real opinions, frustrations, and debates — the language your audience actually uses.</div>
                 """, unsafe_allow_html=True)
                 for r in reddit_items:
                     st.markdown(f"""
@@ -743,8 +745,8 @@ if run_btn and can_run:
                 st.markdown("""
                 <div class="card">
                     <div class="card-title">Forum & Discussion Boards</div>
-                    <div class="card-heading">Other community threads</div>
-                    <div class="card-sub">Quora, niche forums, and other discussion sources.</div>
+                    <div class="card-heading">More practitioner takes</div>
+                    <div class="card-sub">Quora, niche forums, and other sources of unfiltered opinion.</div>
                 """, unsafe_allow_html=True)
                 for r in forum_items:
                     st.markdown(f"""
@@ -767,8 +769,8 @@ if run_btn and can_run:
                 st.markdown("""
                 <div class="card">
                     <div class="card-title">LinkedIn</div>
-                    <div class="card-heading">Practitioner takes & thought leadership</div>
-                    <div class="card-sub">Posts and articles from practitioners in this space.</div>
+                    <div class="card-heading">Expert takes & named opinions</div>
+                    <div class="card-sub">Practitioner posts with attribution — useful for debate framing and credible angles.</div>
                 """, unsafe_allow_html=True)
                 for r in scout_data.get('linkedin_results', []):
                     st.markdown(f"""
@@ -787,8 +789,8 @@ if run_btn and can_run:
                 st.markdown("""
                 <div class="card">
                     <div class="card-title">X / Twitter</div>
-                    <div class="card-heading">Niche takes & breaking angles</div>
-                    <div class="card-sub">Practitioner opinions and trending angles from X.</div>
+                    <div class="card-heading">Contrarian takes & live debates</div>
+                    <div class="card-sub">Fast-moving opinions, industry friction, and the angles practitioners actually argue about.</div>
                 """, unsafe_allow_html=True)
                 for r in scout_data.get('twitter_results', []):
                     st.markdown(f"""
@@ -807,9 +809,9 @@ if run_btn and can_run:
         with tab_news:
             st.markdown("""
             <div class="card">
-                <div class="card-title">Industry News</div>
-                <div class="card-heading">Recent developments</div>
-                <div class="card-sub">Latest news articles — useful for timeliness and stat-sourcing.</div>
+                <div class="card-title">What Changed Recently</div>
+                <div class="card-heading">Industry developments & timeliness hooks</div>
+                <div class="card-sub">What shifted in the last 6-12 months — the "why now" for your article.</div>
             """, unsafe_allow_html=True)
             news_cols = st.columns(2)
             news_items = scout_data.get('news_results', [])
@@ -829,13 +831,37 @@ if run_btn and can_run:
                 st.info("No news results found.")
             st.markdown('</div>', unsafe_allow_html=True)
 
+        # ── Blogs & Reports ───────────────────────────────────────────────────
+        with tab_blogs:
+            st.markdown("""
+            <div class="card">
+                <div class="card-title">Industry Blogs, Newsletters & Reports</div>
+                <div class="card-heading">Original data, surveys & practitioner writing</div>
+                <div class="card-sub">Substack, Medium, and recent research — the kind of sources that actually have something new to say.</div>
+            """, unsafe_allow_html=True)
+            blog_cols = st.columns(2)
+            blog_items = scout_data.get('blog_results', [])
+            for i, r in enumerate(blog_items):
+                with blog_cols[i % 2]:
+                    st.markdown(f"""
+                    <div class="result-card">
+                        <div class="result-card-title">
+                            <a href="{r['url']}" target="_blank" style="color:#7C6EE8;text-decoration:none;">{r['title']}</a>
+                        </div>
+                        <div class="result-card-meta">{r.get('snippet', '')[:250]}</div>
+                    </div>
+                    """, unsafe_allow_html=True)
+            if not blog_items:
+                st.info("No blog or newsletter results found.")
+            st.markdown('</div>', unsafe_allow_html=True)
+
         # ── Reviews ───────────────────────────────────────────────────────────
         with tab_reviews:
             st.markdown("""
             <div class="card">
-                <div class="card-title">G2 / Capterra / Trustpilot</div>
-                <div class="card-heading">User reviews & real-world language</div>
-                <div class="card-sub">Surface-level pain points and vocabulary straight from users.</div>
+                <div class="card-title">Real-World Friction — G2 / Capterra / Trustpilot</div>
+                <div class="card-heading">What actually breaks down in practice</div>
+                <div class="card-sub">User complaints and failures — the gap between what's promised and what's delivered.</div>
             """, unsafe_allow_html=True)
             review_cols = st.columns(2)
             review_items = scout_data.get('review_results', [])
@@ -858,8 +884,8 @@ if run_btn and can_run:
         st.markdown("""
         <div class="card">
             <div class="card-title">Export</div>
-            <div class="card-heading">Download your research</div>
-            <div class="card-sub">Save the Resource Bank and brief in your preferred format.</div>
+            <div class="card-heading">Download your editorial brief</div>
+            <div class="card-sub">Save the Resource Bank and editorial brief in your preferred format.</div>
         </div>
         """, unsafe_allow_html=True)
 
@@ -875,7 +901,7 @@ if run_btn and can_run:
             )
 
         with dl2:
-            full_report = f"# Content Research — {topic}\n\n{brief}"
+            full_report = f"# Editorial Brief — {topic}\n\n{brief}"
             st.download_button(
                 label="📄 Full Report (.md)",
                 data=full_report,
@@ -894,6 +920,7 @@ if run_btn and can_run:
                 "review_results": scout_data.get("review_results", []),
                 "twitter_results": scout_data.get("twitter_results", []),
                 "forum_results": scout_data.get("forum_results", []),
+                "blog_results": scout_data.get("blog_results", []),
                 "brief": brief,
             }
             st.download_button(
