@@ -114,14 +114,28 @@ def _build_prompt(topic: str, scout_data: dict, power_words: str = "") -> str:
                 lines.append(f'  → {r["snippet"][:300]}')
         lines.append("")
 
-    # Forums — additional practitioner voice
+    # Forums — Quora, HackerNews, community boards
     forums = scout_data.get("forum_results", [])
     if forums:
-        lines.append("## Forum Discussions")
+        lines.append("## Community Discussions — Quora, HackerNews & Forums")
+        lines.append("*More practitioner voice beyond Reddit:*")
         for r in forums[:4]:
             lines.append(f'**{r["title"]}**')
             if r.get("snippet"):
                 lines.append(f'  → {r["snippet"][:250]}')
+            lines.append(f'  URL: {r["url"]}')
+        lines.append("")
+
+    # Industry blogs & newsletters — Substack, Medium, surveys, reports
+    blogs = scout_data.get("blog_results", [])
+    if blogs:
+        lines.append("## Industry Blogs, Newsletters & Reports")
+        lines.append("*Original data, surveys, and practitioner-written analysis:*")
+        for r in blogs[:6]:
+            lines.append(f'**{r["title"]}**')
+            if r.get("snippet"):
+                lines.append(f'  → {r["snippet"][:300]}')
+            lines.append(f'  URL: {r["url"]}')
         lines.append("")
 
     # Existing web coverage — what's already out there
@@ -162,10 +176,10 @@ For each item:
 - Why it earns its place: which section it supports, what it proves
 
 Organise by type:
-**Fresh Data & Studies** — stats and research worth citing (flag if older than 2023)
+**Fresh Data & Studies** — stats, surveys, and original reports worth citing (flag if older than 2023)
 **What Changed Recently** — news or shifts that make this timely in 2026
 **Practitioner Voice** — Reddit/forum/X quotes that capture real opinion or frustration
-**Expert & Practitioner Takes** — LinkedIn or named-expert angles with teeth
+**Expert & Practitioner Takes** — LinkedIn, Substack, Medium, or named-expert angles with teeth
 **Real Examples & Case Studies** — companies or situations that prove the argument
 **Review-Based Friction** — user complaints that reveal what people actually struggle with
 

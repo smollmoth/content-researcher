@@ -585,15 +585,16 @@ if run_btn and can_run:
 
         scout_data = run_scout(topic, serper_key, progress_callback=scout_progress)
 
-        st.write(f"📰 {len(scout_data.get('web_results', []))} web results")
+        st.write(f"🌐 {len(scout_data.get('web_results', []))} web results")
         st.write(f"💬 {len(scout_data.get('reddit_results', []))} Reddit threads")
         st.write(f"🏢 {len(scout_data.get('linkedin_results', []))} LinkedIn posts")
         st.write(f"📰 {len(scout_data.get('news_results', []))} news articles")
         st.write(f"⭐ {len(scout_data.get('review_results', []))} reviews")
         st.write(f"🐦 {len(scout_data.get('twitter_results', []))} X/Twitter results")
-        st.write(f"💬 {len(scout_data.get('forum_results', []))} forum results")
+        st.write(f"💬 {len(scout_data.get('forum_results', []))} forum & community results")
+        st.write(f"📝 {len(scout_data.get('blog_results', []))} blog/newsletter/report results")
         st.write(f"❓ {len(scout_data.get('people_also_ask', []))} PAA questions")
-        st.write(f"🔗 {len(scout_data.get('related_terms', []))} related terms")
+        st.write(f"🔗 {len(scout_data.get('related_terms', []))} topic signals")
         status1.update(label="✅ Step 1 complete — Research gathered", state="complete")
 
     # STEP 2: Brief
@@ -641,8 +642,8 @@ if run_btn and can_run:
                 <div class="metric-label">Recent Developments</div>
             </div>
             <div class="metric-card">
-                <div class="metric-number">{len(scout_data.get('review_results', []))}</div>
-                <div class="metric-label">Real-World Friction</div>
+                <div class="metric-number">{len(scout_data.get('blog_results', []))}</div>
+                <div class="metric-label">Blogs & Reports</div>
             </div>
             <div class="metric-card">
                 <div class="metric-number">{len(scout_data.get('people_also_ask', []))}</div>
@@ -652,12 +653,13 @@ if run_btn and can_run:
         """, unsafe_allow_html=True)
 
         # Tabs
-        tab_brief, tab_web, tab_reddit, tab_social, tab_news, tab_reviews = st.tabs([
+        tab_brief, tab_web, tab_reddit, tab_social, tab_news, tab_blogs, tab_reviews = st.tabs([
             "✍️  Editorial Brief",
             "🔍  Context",
             "💬  Practitioner Voice",
             "🏢  Expert Takes",
             "📰  What Changed",
+            "📝  Blogs & Reports",
             "⭐  Real-World Friction",
         ])
 
@@ -829,6 +831,30 @@ if run_btn and can_run:
                 st.info("No news results found.")
             st.markdown('</div>', unsafe_allow_html=True)
 
+        # ── Blogs & Reports ───────────────────────────────────────────────────
+        with tab_blogs:
+            st.markdown("""
+            <div class="card">
+                <div class="card-title">Industry Blogs, Newsletters & Reports</div>
+                <div class="card-heading">Original data, surveys & practitioner writing</div>
+                <div class="card-sub">Substack, Medium, and recent research — the kind of sources that actually have something new to say.</div>
+            """, unsafe_allow_html=True)
+            blog_cols = st.columns(2)
+            blog_items = scout_data.get('blog_results', [])
+            for i, r in enumerate(blog_items):
+                with blog_cols[i % 2]:
+                    st.markdown(f"""
+                    <div class="result-card">
+                        <div class="result-card-title">
+                            <a href="{r['url']}" target="_blank" style="color:#7C6EE8;text-decoration:none;">{r['title']}</a>
+                        </div>
+                        <div class="result-card-meta">{r.get('snippet', '')[:250]}</div>
+                    </div>
+                    """, unsafe_allow_html=True)
+            if not blog_items:
+                st.info("No blog or newsletter results found.")
+            st.markdown('</div>', unsafe_allow_html=True)
+
         # ── Reviews ───────────────────────────────────────────────────────────
         with tab_reviews:
             st.markdown("""
@@ -894,6 +920,7 @@ if run_btn and can_run:
                 "review_results": scout_data.get("review_results", []),
                 "twitter_results": scout_data.get("twitter_results", []),
                 "forum_results": scout_data.get("forum_results", []),
+                "blog_results": scout_data.get("blog_results", []),
                 "brief": brief,
             }
             st.download_button(
