@@ -627,7 +627,8 @@ if run_btn and can_run:
     st.session_state.pipeline_step = 2
     render_progress(progress_placeholder, 2)
 
-    with st.status("✍️ Building editorial brief with Claude...", expanded=True) as status2:
+    brief_label = "✍️ Building editorial brief + improvement analysis with Claude..." if existing_article_content else "✍️ Building editorial brief with Claude..."
+    with st.status(brief_label, expanded=True) as status2:
         def strategist_progress(msg):
             st.write(f"→ {msg}")
 
@@ -680,7 +681,7 @@ if run_btn and can_run:
         """, unsafe_allow_html=True)
 
         # Tabs
-        _tabs = [
+        tab_labels = [
             "✍️  Editorial Brief",
             "🔍  Context",
             "💬  Practitioner Voice",
@@ -690,17 +691,11 @@ if run_btn and can_run:
             "⭐  Real-World Friction",
         ]
         if existing_article_content:
-            _tabs.append("🔄  Article Improvements")
+            tab_labels.append("🔄  Article Improvements")
 
-        _tab_objects = st.tabs(_tabs)
-        tab_brief    = _tab_objects[0]
-        tab_web      = _tab_objects[1]
-        tab_reddit   = _tab_objects[2]
-        tab_social   = _tab_objects[3]
-        tab_news     = _tab_objects[4]
-        tab_blogs    = _tab_objects[5]
-        tab_reviews  = _tab_objects[6]
-        tab_improve  = _tab_objects[7] if existing_article_content else None
+        tabs = st.tabs(tab_labels)
+        tab_brief, tab_web, tab_reddit, tab_social, tab_news, tab_blogs, tab_reviews = tabs[:7]
+        tab_improve = tabs[7] if existing_article_content else None
 
         # ── Brief ─────────────────────────────────────────────────────────────
         with tab_brief:
@@ -968,6 +963,7 @@ if run_btn and can_run:
         with dl3:
             export_data = {
                 "topic": topic,
+                "article_url": article_url.strip() if article_url else None,
                 "related_terms": scout_data.get("related_terms", []),
                 "people_also_ask": scout_data.get("people_also_ask", []),
                 "reddit_results": scout_data.get("reddit_results", []),

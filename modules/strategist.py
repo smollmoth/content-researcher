@@ -194,8 +194,6 @@ def _build_prompt(topic: str, scout_data: dict, power_words: str = "", existing_
 
     research_block = "\n".join(lines)
 
-    parts_instruction = "Write two sections:" if not existing_article else "Write three sections:"
-
     article_part = _build_article_improvement_section(existing_article) if existing_article else ""
 
     return f"""Topic: **{topic}**
@@ -203,10 +201,6 @@ def _build_prompt(topic: str, scout_data: dict, power_words: str = "", existing_
 Here's the raw research. Your job is to find the argument, not fill the template.
 
 {research_block}
-
----
-
-{parts_instruction}
 
 ---
 
@@ -344,6 +338,7 @@ Final gut-check. 3 bullets:
 ---
 
 End with one sentence: the single editorial decision that will determine whether this article is worth reading.
+
 {article_part}"""
 
 
