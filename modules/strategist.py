@@ -53,18 +53,23 @@ Provide a focused improvement brief with these sections:
 ## What the Article Gets Right
 2-3 bullets. What's solid and should stay. Be specific.
 
+## Where Are the Gaps?
+Based on the research, what is this article missing that it should have? Look for:
+- Frameworks or mental models that would sharpen the argument
+- Named experts or practitioners whose takes would add credibility
+- Contrarian voices or dissenting views the article ignores
+- Fresh data, studies, or surveys published since this article
+- Internal practitioner logic (how people actually do this, not how it's supposed to work)
+For each gap: name it specifically, explain why it matters, and point to the evidence from the Resource Bank that fills it.
+
+## What Has Changed Since It Was Published?
+Based on the research, what has shifted in the topic, the market, or how experts think about this — things that make parts of the article feel dated or wrong?
+- Call out specific claims or sections that no longer hold
+- Name what changed (new tools, studies, market events, expert consensus shifts)
+- For each: what the article says vs. what the research shows is now true
+
 ## Outdated or Stale Content
-Flag specific claims, stats, or sections that are now outdated based on the research. For each: what the article says, what's changed, and what should replace it.
-
-## Missing Angles & Evidence
-What did the research surface that the article completely ignores? Prioritise:
-- Fresh data or studies published after the article
-- Practitioner debates the article doesn't acknowledge
-- Contrarian takes that would strengthen the argument
-- Real examples that are more compelling than what's in the article
-
-## Structural Gaps
-Is the article missing a section it needs? Is a section too thin? Name the specific gap and what evidence from the Resource Bank would fill it.
+Any specific stats, named tools, or tactical advice that has aged badly. For each: quote the article, state what's changed, suggest the replacement.
 
 ## The One Change That Matters Most
 Single sentence: if the writer can only do one thing to improve this article, what is it?"""
