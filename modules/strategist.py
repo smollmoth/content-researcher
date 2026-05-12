@@ -35,7 +35,42 @@ Before writing, search the web for the freshest stats, case studies, and expert 
 **Information gain rule:** If a point appears in every article on this topic, cut it. Only include what gives the reader something they couldn't get from the first Google result."""
 
 
-def _build_prompt(topic: str, scout_data: dict, power_words: str = "") -> str:
+def _build_article_improvement_section(article_content: str) -> str:
+    truncated = article_content[:6000]
+    return f"""---
+
+# PART 3 — ARTICLE IMPROVEMENT SUGGESTIONS
+
+Below is the existing article to update. Using the research above, compare what the article currently covers against the fresh evidence, debates, and angles you've surfaced.
+
+**Existing article content:**
+{truncated}
+
+---
+
+Provide a focused improvement brief with these sections:
+
+## What the Article Gets Right
+2-3 bullets. What's solid and should stay. Be specific.
+
+## Outdated or Stale Content
+Flag specific claims, stats, or sections that are now outdated based on the research. For each: what the article says, what's changed, and what should replace it.
+
+## Missing Angles & Evidence
+What did the research surface that the article completely ignores? Prioritise:
+- Fresh data or studies published after the article
+- Practitioner debates the article doesn't acknowledge
+- Contrarian takes that would strengthen the argument
+- Real examples that are more compelling than what's in the article
+
+## Structural Gaps
+Is the article missing a section it needs? Is a section too thin? Name the specific gap and what evidence from the Resource Bank would fill it.
+
+## The One Change That Matters Most
+Single sentence: if the writer can only do one thing to improve this article, what is it?"""
+
+
+def _build_prompt(topic: str, scout_data: dict, power_words: str = "", existing_article: str = "") -> str:
     lines = []
 
     # Topic signals (formerly "keyword cluster") — framed as editorial signals
@@ -154,6 +189,10 @@ def _build_prompt(topic: str, scout_data: dict, power_words: str = "") -> str:
 
     research_block = "\n".join(lines)
 
+    parts_instruction = "Write two sections:" if not existing_article else "Write three sections:"
+
+    article_part = _build_article_improvement_section(existing_article) if existing_article else ""
+
     return f"""Topic: **{topic}**
 
 Here's the raw research. Your job is to find the argument, not fill the template.
@@ -162,7 +201,7 @@ Here's the raw research. Your job is to find the argument, not fill the template
 
 ---
 
-Write two sections:
+{parts_instruction}
 
 ---
 
@@ -299,7 +338,8 @@ Final gut-check. 3 bullets:
 
 ---
 
-End with one sentence: the single editorial decision that will determine whether this article is worth reading."""
+End with one sentence: the single editorial decision that will determine whether this article is worth reading.
+{article_part}"""
 
 
 def generate_brief(
@@ -307,6 +347,7 @@ def generate_brief(
     scout_data: dict,
     api_key: str,
     power_words: str = "",
+    existing_article: str = "",
     progress_callback=None,
 ) -> tuple[str | None, str | None]:
     """
@@ -315,7 +356,7 @@ def generate_brief(
     """
     try:
         client = Anthropic(api_key=api_key)
-        prompt = _build_prompt(topic, scout_data, power_words)
+        prompt = _build_prompt(topic, scout_data, power_words, existing_article)
 
         if progress_callback:
             progress_callback("Claude is finding the thesis, the debate, and the fresh angles...")

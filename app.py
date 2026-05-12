@@ -13,6 +13,7 @@ import json
 
 from modules.scout import run_scout
 from modules.strategist import generate_brief
+from modules.extractor import scrape_url
 
 # ── Load keys from secrets ─────────────────────────────────────────────────────
 _secret_anthropic = st.secrets.get("ANTHROPIC_API_KEY", "")
@@ -550,6 +551,20 @@ topic = st.text_input(
     label_visibility="collapsed"
 )
 
+st.markdown("""
+<div class="card" style="margin-top:16px;">
+    <div class="card-title">Existing Article (Optional)</div>
+    <div class="card-heading">Updating something already live?</div>
+    <div class="card-sub">Paste the URL of the article you're refreshing. We'll fetch it and compare it against the research — then suggest exactly what to improve.</div>
+</div>
+""", unsafe_allow_html=True)
+
+article_url = st.text_input(
+    "Existing article URL",
+    placeholder="https://yoursite.com/your-article  (optional — leave blank to skip)",
+    label_visibility="collapsed"
+)
+
 # ── Run button ────────────────────────────────────────────────────────────────
 st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
 can_run = bool(topic and keys_ok)
@@ -574,6 +589,17 @@ with col_hint:
 
 # ── Pipeline ──────────────────────────────────────────────────────────────────
 if run_btn and can_run:
+
+    # Optional: fetch existing article
+    existing_article_content = ""
+    if article_url and article_url.strip():
+        with st.status("📄 Fetching existing article...", expanded=False) as fetch_status:
+            result = scrape_url(article_url.strip(), rate_limit=0)
+            if result.get("content"):
+                existing_article_content = result["content"]
+                fetch_status.update(label="✅ Existing article fetched", state="complete")
+            else:
+                fetch_status.update(label=f"⚠️ Could not fetch article: {result.get('error', 'unknown error')} — continuing without it", state="error")
 
     # STEP 1: Research
     st.session_state.pipeline_step = 1
@@ -610,6 +636,7 @@ if run_btn and can_run:
             scout_data=scout_data,
             api_key=anthropic_key,
             power_words=power_words,
+            existing_article=existing_article_content,
             progress_callback=strategist_progress,
         )
         if error:
@@ -653,7 +680,7 @@ if run_btn and can_run:
         """, unsafe_allow_html=True)
 
         # Tabs
-        tab_brief, tab_web, tab_reddit, tab_social, tab_news, tab_blogs, tab_reviews = st.tabs([
+        _tabs = [
             "✍️  Editorial Brief",
             "🔍  Context",
             "💬  Practitioner Voice",
@@ -661,7 +688,19 @@ if run_btn and can_run:
             "📰  What Changed",
             "📝  Blogs & Reports",
             "⭐  Real-World Friction",
-        ])
+        ]
+        if existing_article_content:
+            _tabs.append("🔄  Article Improvements")
+
+        _tab_objects = st.tabs(_tabs)
+        tab_brief    = _tab_objects[0]
+        tab_web      = _tab_objects[1]
+        tab_reddit   = _tab_objects[2]
+        tab_social   = _tab_objects[3]
+        tab_news     = _tab_objects[4]
+        tab_blogs    = _tab_objects[5]
+        tab_reviews  = _tab_objects[6]
+        tab_improve  = _tab_objects[7] if existing_article_content else None
 
         # ── Brief ─────────────────────────────────────────────────────────────
         with tab_brief:
@@ -878,6 +917,23 @@ if run_btn and can_run:
             if not review_items:
                 st.info("No review results found.")
             st.markdown('</div>', unsafe_allow_html=True)
+
+        # ── Article Improvements ──────────────────────────────────────────────────
+        if tab_improve is not None:
+            with tab_improve:
+                st.markdown("""
+                <div class="card">
+                    <div class="card-title">Article Improvement Suggestions</div>
+                    <div class="card-heading">What to fix, add, and cut</div>
+                    <div class="card-sub">Based on the fresh research, here's how to make the existing article meaningfully better — not just longer.</div>
+                </div>
+                """, unsafe_allow_html=True)
+                if "PART 3" in brief:
+                    part3_start = brief.find("PART 3")
+                    part3_text = brief[part3_start:]
+                    st.markdown(part3_text)
+                else:
+                    st.info("Improvement suggestions are included at the end of the Editorial Brief tab.")
 
         # ── Downloads ─────────────────────────────────────────────────────────
         st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
