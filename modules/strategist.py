@@ -35,7 +35,47 @@ Before writing, search the web for the freshest stats, case studies, and expert 
 **Information gain rule:** If a point appears in every article on this topic, cut it. Only include what gives the reader something they couldn't get from the first Google result."""
 
 
-def _build_prompt(topic: str, scout_data: dict, power_words: str = "") -> str:
+def _build_article_improvement_section(article_content: str) -> str:
+    truncated = article_content[:6000]
+    return f"""---
+
+# PART 3 — ARTICLE IMPROVEMENT SUGGESTIONS
+
+Below is the existing article to update. Using the research above, compare what the article currently covers against the fresh evidence, debates, and angles you've surfaced.
+
+**Existing article content:**
+{truncated}
+
+---
+
+Provide a focused improvement brief with these sections:
+
+## What the Article Gets Right
+2-3 bullets. What's solid and should stay. Be specific.
+
+## Where Are the Gaps?
+Based on the research, what is this article missing that it should have? Look for:
+- Frameworks or mental models that would sharpen the argument
+- Named experts or practitioners whose takes would add credibility
+- Contrarian voices or dissenting views the article ignores
+- Fresh data, studies, or surveys published since this article
+- Internal practitioner logic (how people actually do this, not how it's supposed to work)
+For each gap: name it specifically, explain why it matters, and point to the evidence from the Resource Bank that fills it.
+
+## What Has Changed Since It Was Published?
+Based on the research, what has shifted in the topic, the market, or how experts think about this — things that make parts of the article feel dated or wrong?
+- Call out specific claims or sections that no longer hold
+- Name what changed (new tools, studies, market events, expert consensus shifts)
+- For each: what the article says vs. what the research shows is now true
+
+## Outdated or Stale Content
+Any specific stats, named tools, or tactical advice that has aged badly. For each: quote the article, state what's changed, suggest the replacement.
+
+## The One Change That Matters Most
+Single sentence: if the writer can only do one thing to improve this article, what is it?"""
+
+
+def _build_prompt(topic: str, scout_data: dict, power_words: str = "", existing_article: str = "") -> str:
     lines = []
 
     # Topic signals (formerly "keyword cluster") — framed as editorial signals
@@ -154,15 +194,13 @@ def _build_prompt(topic: str, scout_data: dict, power_words: str = "") -> str:
 
     research_block = "\n".join(lines)
 
+    article_part = _build_article_improvement_section(existing_article) if existing_article else ""
+
     return f"""Topic: **{topic}**
 
 Here's the raw research. Your job is to find the argument, not fill the template.
 
 {research_block}
-
----
-
-Write two sections:
 
 ---
 
@@ -299,7 +337,9 @@ Final gut-check. 3 bullets:
 
 ---
 
-End with one sentence: the single editorial decision that will determine whether this article is worth reading."""
+End with one sentence: the single editorial decision that will determine whether this article is worth reading.
+
+{article_part}"""
 
 
 def generate_brief(
@@ -307,6 +347,7 @@ def generate_brief(
     scout_data: dict,
     api_key: str,
     power_words: str = "",
+    existing_article: str = "",
     progress_callback=None,
 ) -> tuple[str | None, str | None]:
     """
@@ -315,7 +356,7 @@ def generate_brief(
     """
     try:
         client = Anthropic(api_key=api_key)
-        prompt = _build_prompt(topic, scout_data, power_words)
+        prompt = _build_prompt(topic, scout_data, power_words, existing_article)
 
         if progress_callback:
             progress_callback("Claude is finding the thesis, the debate, and the fresh angles...")
